@@ -25,7 +25,7 @@ const Form = ({ handleClose }) => {
 
   
   return (
-    <>
+    <React.Fragment>
     
     <div className="UIBox"></div>
     <Typography variant="h4" component="div" gutterBottom className="SignUpHeader" sx={{ml: 3, mt: 3}}>
@@ -82,7 +82,8 @@ const Form = ({ handleClose }) => {
       </Button>
       <Button variant="text" href="/signup">Sign Up</Button>
     </div>
-  </form></>
+  </form>
+  </React.Fragment>
     
   );
 };
