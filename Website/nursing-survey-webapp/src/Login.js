@@ -5,6 +5,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import LockIcon from '@mui/icons-material/Lock';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 
 import './SignUp.css'
 
@@ -25,6 +26,7 @@ const Form = ({ handleClose }) => {
   
   return (
     <>
+    
     <div className="UIBox"></div>
     <Typography variant="h4" component="div" gutterBottom className="SignUpHeader" sx={{ml: 3, mt: 3}}>
       Login
@@ -33,6 +35,7 @@ const Form = ({ handleClose }) => {
     
     
     <TextField
+      margin="normal"
       label="Email"
       variant="standard"
       type="email"
@@ -49,12 +52,16 @@ const Form = ({ handleClose }) => {
       onChange={e => setEmail(e.target.value)}
     />
     <TextField
+      margin="normal"
       label="Password"
       variant="standard"
       type="password"
       required
       value={password}
       placeholder="e.g. jane.doe@example.com"
+      helperText={<Link href="/forgot" variant="body2" underline="none" >
+        {'Forgot your password?'}
+      </Link>}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
@@ -64,6 +71,8 @@ const Form = ({ handleClose }) => {
       }}
       onChange={e => setPassword(e.target.value)}
     />
+    
+    
     <div className="SubmitButton">
       {/* <Button variant="contained" onClick={handleClose}>
         Cancel
@@ -71,7 +80,7 @@ const Form = ({ handleClose }) => {
       <Button type="submit" variant="contained" color="primary">
         Log In
       </Button>
-      <Button variant="text">Sign Up</Button>
+      <Button variant="text" href="/signup">Sign Up</Button>
     </div>
   </form></>
     

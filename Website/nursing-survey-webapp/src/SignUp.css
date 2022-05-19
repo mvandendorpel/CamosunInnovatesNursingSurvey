@@ -11,7 +11,7 @@
 }
 
 .MuiInput-root {
-    margin: 200px 0 20px 0;
+    
     min-width: 100%;
 }
 
@@ -40,4 +40,9 @@
 * {
     font-family: 'Bahnschrift', sans-serif;
                                                 
+}
+
+.CloseButton{
+    float: left;
+    width: 10%;
 }
