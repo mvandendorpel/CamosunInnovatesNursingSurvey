@@ -1,0 +1,43 @@
+.SignUp{
+    margin: 0 auto;
+    align-items: center;
+    display: flex;
+    
+    direction: column;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+    
+}
+
+.MuiInput-root {
+    margin: 200px 0 20px 0;
+    min-width: 100%;
+}
+
+.MuiFormControl-root {
+    width: 90%;
+}
+.MuiTypography-h3 {
+    margin: 20px;
+}
+
+.UIBox {
+    background-color: #214971;
+    width: 100%;
+    height:25vh;
+}
+
+.SubmitButton {
+    color: #12263A;
+    width: 75%;
+}
+
+.MuiButtonBase-root{
+    width: 100%;
+}
+
+* {
+    font-family: 'Bahnschrift', sans-serif;
+                                                
+}
