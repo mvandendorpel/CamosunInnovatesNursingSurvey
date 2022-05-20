@@ -9,7 +9,7 @@ let jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = process.env.JWT_SECRET;
 
-const userDB = new sqlite3.Database('auth_test.db.sqlite');
+const userDB = new sqlite3.Database('auth_test.db');
 
 
 const alreadyExists = async (email, username) => {
@@ -29,12 +29,15 @@ const verifyPassword = async function(plainTextPassword) {
 }
 
 const registerNewUser = async (req, res) => {
+
+    
     try {
         if (! await alreadyExists(req.body.email, req.body.username)) {
             const hash = await argon2.hash(req.body.password, {
                 type: argon2.argon2id
             });
-            userDB.run("INSERT INTO test(email, password, username) VALUES (?, ?, ?", [req.body.email, hash, req.body.username]);
+            var query = "INSERT INTO test (email, password, username) VALUES (?, ?, ?);"
+            userDB.run(query, [req.body.email, hash, req.body.username]);
             res.status(201).send("User Created");
         }
         else {
