@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import MailIcon from '@mui/icons-material/Mail';
@@ -15,11 +17,22 @@ const Form = ({ handleClose }) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [msg, setMsg] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(email, password);
-    handleClose();
+    try {
+      await axios.post('http://localhost:5000/login', {
+          email: email,
+          password: password
+      });
+      navigate("/dashboard");
+    } catch (error) {
+      if (error.response) {
+          setMsg(error.response.data.msg);
+      }
+    }
   };
 
 
@@ -58,7 +71,7 @@ const Form = ({ handleClose }) => {
       type="password"
       required
       value={password}
-      placeholder="e.g. jane.doe@example.com"
+      placeholder="********"
       helperText={<Link href="/forgot" variant="body2" underline="none" >
         {'Forgot your password?'}
       </Link>}
@@ -77,7 +90,7 @@ const Form = ({ handleClose }) => {
       {/* <Button variant="contained" onClick={handleClose}>
         Cancel
       </Button> */}
-      <Button type="submit" variant="contained" color="primary">
+      <Button type="submit" variant="contained" color="primary" onClick={handleSubmit} >
         Log In
       </Button>
       <Button variant="text" href="/signup">Sign Up</Button>

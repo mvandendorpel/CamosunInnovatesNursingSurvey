@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import MailIcon from '@mui/icons-material/Mail';
@@ -17,11 +19,29 @@ const Form = ({ handleClose }) => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  //const [confPassword, setConfPassword] = useState('');
+  const [msg, setMsg] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(firstName, lastName, email, password);
-    handleClose();
+    try { 
+      await axios.post('http://localhost:5000/users', { 
+        fname: firstName,
+        lname: lastName,
+        email: email,
+        password: password
+        //confPassword: confPassword
+
+      });
+      navigate("/");
+    } catch (e) {
+      if (e.response) {
+        setMsg(e.response.data.msg);
+      }
+    }
+    //handleClose();
   };
 
 
@@ -108,7 +128,7 @@ const Form = ({ handleClose }) => {
         {/* <Button variant="contained" onClick={handleClose}>
           Cancel
         </Button> */}
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}>
           Sign Up
         </Button>
         
