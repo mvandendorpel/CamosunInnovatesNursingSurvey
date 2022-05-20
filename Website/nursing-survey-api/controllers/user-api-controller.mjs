@@ -19,8 +19,8 @@ const alreadyExists = async (email, username) => {
         return userExists;
 }
 
-const verifyPassword = async function(plainTextPassword) {
-    const dbHashedPassword = this.password;
+const verifyPassword = async function(plainTextPassword, dbHashedPassword) {
+    //const dbHashedPassword = this.password;
     try {
         return await argon2.verify(dbHashedPassword, plainTextPassword);
     } catch (err) {
@@ -67,46 +67,37 @@ const logInUser = (req, res) => {
 }
 
 // Configure JWT Token Auth
-passport.use(new JwtStrategy(
-    jwtOptions, (jwt_payload, done) => {
-        userModel
-        .findById(jwt_payload.sub)
-        .exec( (error, user) => {
-            // error in searching
-            if (error) return done(error);
-            if (!user) {
-                // user not found
-                return done(null, false);
-            } else {
-                // user found
-                return done(null, user);
-            }
-        })
-    }
-));
+// passport.use(new JwtStrategy(
+//     jwtOptions, (jwt_payload, done) => {
+//         userModel
+//         .findById(jwt_payload.sub)
+//         .exec( (error, user) => {
+//             // error in searching
+//             if (error) return done(error);
+//             if (!user) {
+//                 // user not found
+//                 return done(null, false);
+//             } else {
+//                 // user found
+//                 return done(null, user);
+//             }
+//         })
+//     }
+// ));
 
 
 passport.use(new LocalStrategy(
-
-    async (username, password, done) => {
-        let user = [];
-        var sql = "SELECT * from test WHERE username = ?";
-        userDB.all(sql, username, function(err,rows) {
+    (username, password, done) => {
+        var sql = "SELECT username,password FROM test WHERE username = ?";
+        userDB.get(sql, username, function(err,row) {
             if (err) {
-                res.status(400).json({"error": err.message})
-                return;
+                console.log(err);
             }
-            rows.forEach(function (row) {
-                user.push(row);
+            if (!row) return done(null, false);
+            if(!argon2.verify(row.password, password)) {return done(null, false);}
+            return done(null, row);
             })
-        });
-        if (error) return done(error);
-
-        if (!user[0]) return done(null, false);
-
-        if(!await verifyPassword(password)) {return done(null, false);}
-
-        return done(null, user[0]);
-    }));
+        })
+    );
 
 export {registerNewUser, logInUser};
