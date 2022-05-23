@@ -1,10 +1,215 @@
 {
+  "openapi": "3.0.3",
+  "info": {
+      "title": "CINS API",
+      "version": "1.0"
+  },
+  "components": { 
+    "securitySchemes": {
+        "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     
-        "openapi": "3.0.3",
-        "info": {
-        "title": "Survey API",
-        "version": "1.0"
+      "schemas": { 
+        "message": { 
+          "type": "object", 
+          "description": "A message", 
+          "required": [ 
+              "name", 
+              "msgText" 
+              ], 
+          "properties": { 
+              "name": { 
+                  "type": "string", 
+                  "minLength": 2, 
+                  "maxLength": 15, 
+                  "pattern": "[A-Za-z]", 
+                  "description": "Name of User who created the message.", 
+                  "example": "Fred" 
+              }, 
+              "msgText": { 
+                  "type": "string", 
+                  "minLength": 2, 
+                  "maxLength": 30, 
+                  "description": "A message.", 
+                  "example": "Hello World!" 
+              } 
+          } 
         },
-        "paths": {}
+        "user": {
+          "type": "object",
+          "description": "A user",
+          "required": [
+            "email",
+            "username",
+            "password"
+          ],
+          "properties": {
+            "username":{
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 30,
+              "description": "Username for registering on site",
+              "example": "chaosengel"
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "an email address for uniquely identifying users",
+              "example": "ics-096@camosun.bc.ca"
+            },
+            "password": {
+              "type": "string",
+              "format": "password",
+              "minLength": 8,
+              "maxLength": 64,
+              "description": "password to authenticate users",
+              "example": "hunter22"
+            }
+          }
+        },
+        "login": {
+          "type": "object",
+          "description": "A login",
+          "required": [
+            "username",
+            "password"
+          ],
+          "properties": {
+            "username": {
+              "type": "string",
+              "maxLength": 50,
+              "description": "A username or email address to log in",
+              "example": "chaosengel"
+            },
+            "password": {
+              "type": "string",
+              "maxLength": 64,
+              "description": "A user password",
+              "example": "hunter22"
+            }
+          }
+        } 
+      } ,
+      "responses": { 
+        "429TooManyRequests": { 
+          "description": "Too many requests."
+        } 
+    }
+    },
+  "paths": { 
+      "/users": {
+        "description": "All the users",
+        "post": {
+          "requestBody": {
+            "description": "Add a new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/user"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request.  The message in the body of the Request is either missing or malformed."
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "429": {
+              "$ref": "#/components/responses/429TooManyRequests" 
+            }
+          }
+        }
+      },
+      "patch": {
+        "requestBody": {
+          "description": "Update user password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request.  The message in the body of the request is either missing for malformed"
+          },
+          "429": {
+            "$ref" : "#/components/responses/429TooManyRequests"
+          }
+        }
+      },
+      "/login": {
+        "description": "For logging in users",
+        "post": {
+          "requestBody": {
+            "description": "Send a login request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/login"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "description": "JWT Token",
+                    "properties": {
+                      "token": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Username or Password do not match"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "429": {
+              "$ref": "#/components/responses/429TooManyRequests"
+            }
+        }
+
+        }
         
+      }
+  }
 }
