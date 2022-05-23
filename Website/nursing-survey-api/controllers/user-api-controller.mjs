@@ -75,6 +75,9 @@ const updateUserPassword = (req, res) => {
         userDB.run(query, [hash, req.body.username]);
         res.status(201).send("Password Updated");
     }
+    catch(err) {
+        console.log(err);
+    }
 }
 
 // Configure JWT Token Auth
