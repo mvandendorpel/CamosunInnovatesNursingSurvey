@@ -14,18 +14,18 @@ import './SignUp.css'
 const Form = ({ handleClose }) => {
   
   // create state variables for each input
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(firstName, lastName, email, password);
+    console.log(username, email, password);
     try { 
       await axios.post('http://localhost:3004/api/users',{
         email: email,
-        username: (firstName+lastName),
+        username: username,
         password: password
       });
     } catch (e) {
@@ -44,13 +44,13 @@ const Form = ({ handleClose }) => {
     </Typography>
     <form className="SignUp" onSubmit={handleSubmit}>
     
-      <TextField //First Name Text Field
+      <TextField //Username Text Field
         margin="normal"
-        label="First Name"
+        label="Username"
         variant="standard"
         required
-        value={firstName}
-        placeholder="e.g. Jane"
+        value={username}
+        placeholder="e.g. janedoe"
         InputProps={{
           startAdornment: ( 
             <InputAdornment position="start">
@@ -58,25 +58,10 @@ const Form = ({ handleClose }) => {
             </InputAdornment>
           ),
         }}
-        onChange={e => setFirstName(e.target.value)}
+        onChange={e => setUsername(e.target.value)}
       />
       
-      <TextField //Last Name Text Field
-        margin="normal" 
-        label="Last Name"
-        variant="standard"
-        required
-        value={lastName}
-        placeholder="e.g. Doe"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <PersonIcon />
-            </InputAdornment>
-          ),
-        }}
-        onChange={e => setLastName(e.target.value)}
-      />
+      
       <TextField
         margin="normal"
         label="Email"
@@ -101,7 +86,7 @@ const Form = ({ handleClose }) => {
         type="password"
         required
         value={password}
-        placeholder="e.g. jane.doe@example.com"
+        placeholder="********"
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
