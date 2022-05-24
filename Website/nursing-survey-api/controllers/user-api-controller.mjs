@@ -27,8 +27,6 @@ const verifyPassword = async function(plainTextPassword, dbHashedPassword) {
 }
 
 const registerNewUser = async (req, res) => {
-
-
     try {
         if (! await alreadyExists(req.body.email, req.body.username)) {
             const hash = await argon2.hash(req.body.password, {
@@ -100,14 +98,15 @@ const logInUser = (req, res) => {
 
 
 passport.use(new LocalStrategy(
-    (username, password, done) => {
+    async (username, password, done) => {
         var sql = "SELECT username,password FROM test WHERE username = ?";
-        userDB.get(sql, username, function(err,row) {
+        userDB.get(sql, username, async (err,row) => {
             if (err) {
                 console.log(err);
             }
             if (!row) return done(null, false);
-            if(!argon2.verify(row.password, password)) {return done(null, false);}
+            console.log(argon2.verify(row.password, password));
+            if(!await argon2.verify(row.password, password)) {return done(null, false);}
             return done(null, row);
             })
         })
