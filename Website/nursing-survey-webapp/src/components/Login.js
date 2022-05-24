@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import MailIcon from '@mui/icons-material/Mail';
@@ -8,33 +6,28 @@ import LockIcon from '@mui/icons-material/Lock';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-
+import axios from 'axios';
 import './SignUp.css'
 
 const Form = ({ handleClose }) => {
   
   // create state variables for each input
 
-  const [email, setEmail] = useState('');
+  const [username, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [msg, setMsg] = useState('');
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(username, password);
     try {
-      await axios.post('http://localhost:5000/login', {
-          email: email,
-          password: password
+      await axios.post('http://localhost:3004/api/login', {
+        username: username,
+        password: password
       });
-      navigate("/dashboard");
-    } catch (error) {
-      if (error.response) {
-          setMsg(error.response.data.msg);
-      }
+    } catch (e) {
+      console.log(e);
     }
   };
-
 
   
   return (
@@ -51,9 +44,9 @@ const Form = ({ handleClose }) => {
       margin="normal"
       label="Email"
       variant="standard"
-      type="email"
+      type="text"
       required
-      value={email}
+      value={username}
       placeholder="e.g. jane.doe@example.com"
       InputProps={{
         startAdornment: (
@@ -71,7 +64,7 @@ const Form = ({ handleClose }) => {
       type="password"
       required
       value={password}
-      placeholder="********"
+      placeholder="e.g. jane.doe@example.com"
       helperText={<Link href="/forgot" variant="body2" underline="none" >
         {'Forgot your password?'}
       </Link>}
@@ -85,12 +78,11 @@ const Form = ({ handleClose }) => {
       onChange={e => setPassword(e.target.value)}
     />
     
-    
     <div className="SubmitButton">
       {/* <Button variant="contained" onClick={handleClose}>
         Cancel
       </Button> */}
-      <Button type="submit" variant="contained" color="primary" onClick={handleSubmit} >
+      <Button type="submit" variant="contained" color="primary">
         Log In
       </Button>
       <Button variant="text" href="/signup">Sign Up</Button>

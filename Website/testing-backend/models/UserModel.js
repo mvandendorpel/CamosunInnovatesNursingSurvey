@@ -8,7 +8,7 @@ const Users = db.define('users',{
         type: DataTypes.STRING
     },
     lname:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING 
     },
     email:{
         type: DataTypes.STRING

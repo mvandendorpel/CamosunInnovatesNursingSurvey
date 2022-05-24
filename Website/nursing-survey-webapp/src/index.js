@@ -7,20 +7,17 @@ import { BrowserRouter, Routes, Route, } from "react-router-dom";
 import SignUp from './components/SignUp.js';
 import Login from './components/Login.js';
 import ForgotPassword from './components/ForgotPassword.js';
-import Dashboard from "./components/Dashboard";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <Routes>
 
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
           
         <Route path="/signup" element={<SignUp />} />
           
         <Route path="/forgot" element={<ForgotPassword />} />
-
-        <Route path="/dashboard" element={<Dashboard />} />
           
       </Routes>
     <App />

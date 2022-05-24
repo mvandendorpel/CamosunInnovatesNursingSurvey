@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import MailIcon from '@mui/icons-material/Mail';
@@ -10,6 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import axios from "axios";
 import './SignUp.css'
 
 const Form = ({ handleClose }) => {
@@ -19,32 +18,20 @@ const Form = ({ handleClose }) => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  //const [confPassword, setConfPassword] = useState('');
-  const [msg, setMsg] = useState('');
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(firstName, lastName, email, password);
     try { 
-      await axios.post('http://localhost:5000/users', { 
-        fname: firstName,
-        lname: lastName,
+      await axios.post('http://localhost:3004/api/users',{
         email: email,
+        username: (firstName+lastName),
         password: password
-        //confPassword: confPassword
-
       });
-      navigate("/");
     } catch (e) {
-      if (e.response) {
-        setMsg(e.response.data.msg);
-      }
+      console.log(e);
     }
-    //handleClose();
   };
-
-
   
   return (
     <>
@@ -128,7 +115,7 @@ const Form = ({ handleClose }) => {
         {/* <Button variant="contained" onClick={handleClose}>
           Cancel
         </Button> */}
-        <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}>
+        <Button type="submit" variant="contained" color="primary">
           Sign Up
         </Button>
         

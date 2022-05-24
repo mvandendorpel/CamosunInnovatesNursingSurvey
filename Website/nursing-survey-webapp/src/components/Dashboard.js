@@ -18,7 +18,7 @@ const Dashboard = () => {
     }, []);
  
     const refreshToken = async () => {
-        try {
+        try { 
             const response = await axios.get('http://localhost:5000/token');
             console.log(response.data);
             setToken(response.data.accessToken);
