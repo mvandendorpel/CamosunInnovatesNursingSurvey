@@ -11,12 +11,10 @@ jwtOptions.secretOrKey = process.env.JWT_SECRET;
 
 const userDB = new sqlite3.Database('auth_test.db');
 
-
 const alreadyExists = async (email, username) => {
-        let userExists = false;
-        await userDB.run("SELECT * FROM test WHERE username = ? OR email = ?", [email, username], function () {userExists = true });
-
-        return userExists;
+    let userExists = false;
+    await userDB.run("SELECT * FROM test WHERE username = ? OR email = ?", [email, username], function () {userExists = true });
+    return userExists;
 }
 
 const verifyPassword = async function(plainTextPassword, dbHashedPassword) {
@@ -30,7 +28,7 @@ const verifyPassword = async function(plainTextPassword, dbHashedPassword) {
 
 const registerNewUser = async (req, res) => {
 
-    
+
     try {
         if (! await alreadyExists(req.body.email, req.body.username)) {
             const hash = await argon2.hash(req.body.password, {
@@ -66,7 +64,8 @@ const logInUser = (req, res) => {
     );
 }
 
-const updateUserPassword = (req, res) => {
+//Not yet implemented
+/* const updateUserPassword = async (req, res) => {
     try {
         const hash = await argon2.hash(req.body.password, {
             type: argon2.argon2id
@@ -78,7 +77,7 @@ const updateUserPassword = (req, res) => {
     catch(err) {
         console.log(err);
     }
-}
+} */
 
 // Configure JWT Token Auth
 // passport.use(new JwtStrategy(
