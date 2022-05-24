@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import axios from "axios";
 import './SignUp.css'
 
 const Form = ({ handleClose }) => {
@@ -18,10 +19,18 @@ const Form = ({ handleClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(firstName, lastName, email, password);
-    handleClose();
+    try { 
+      await axios.post('http://localhost:3004/api/users',{
+        email: email,
+        username: (firstName+lastName),
+        password: password
+      });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
 

@@ -6,20 +6,27 @@ import LockIcon from '@mui/icons-material/Lock';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-
+import axios from 'axios';
 import './SignUp.css'
 
 const Form = ({ handleClose }) => {
   
   // create state variables for each input
 
-  const [email, setEmail] = useState('');
+  const [username, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(email, password);
-    handleClose();
+    console.log(username, password);
+    try {
+      await axios.post('http://localhost:3004/api/login', {
+        username: username,
+        password: password
+      });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
 
@@ -38,9 +45,9 @@ const Form = ({ handleClose }) => {
       margin="normal"
       label="Email"
       variant="standard"
-      type="email"
+      type="text"
       required
-      value={email}
+      value={username}
       placeholder="e.g. jane.doe@example.com"
       InputProps={{
         startAdornment: (
