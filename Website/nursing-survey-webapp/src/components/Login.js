@@ -29,7 +29,6 @@ const Form = ({ handleClose }) => {
     }
   };
 
-
   
   return (
     <React.Fragment>
@@ -78,7 +77,6 @@ const Form = ({ handleClose }) => {
       }}
       onChange={e => setPassword(e.target.value)}
     />
-    
     
     <div className="SubmitButton">
       {/* <Button variant="contained" onClick={handleClose}>
