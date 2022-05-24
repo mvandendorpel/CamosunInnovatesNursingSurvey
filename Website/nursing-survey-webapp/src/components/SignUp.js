@@ -32,8 +32,6 @@ const Form = ({ handleClose }) => {
       console.log(e);
     }
   };
-
-
   
   return (
     <>

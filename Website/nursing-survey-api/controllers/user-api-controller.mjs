@@ -66,6 +66,20 @@ const logInUser = (req, res) => {
     );
 }
 
+const updateUserPassword = (req, res) => {
+    try {
+        const hash = await argon2.hash(req.body.password, {
+            type: argon2.argon2id
+        });
+        var query = "UPDATE users SET password = ? WHERE username = ?";
+        userDB.run(query, [hash, req.body.username]);
+        res.status(201).send("Password Updated");
+    }
+    catch(err) {
+        console.log(err);
+    }
+}
+
 // Configure JWT Token Auth
 // passport.use(new JwtStrategy(
 //     jwtOptions, (jwt_payload, done) => {
