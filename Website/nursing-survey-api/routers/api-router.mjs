@@ -1,11 +1,16 @@
 import express, { Router } from 'express';
 import passport from 'passport';
+import { getSurveyQuestions, saveSurveyAnswers } from '../controllers/survey-api-controller.mjs';
 import {registerNewUser, logInUser} from '../controllers/user-api-controller.mjs';
 
 const router = express.Router();
 
 router.route('/users')
 .post(registerNewUser)
+
+router.route('/survey_questions')
+.get(getSurveyQuestions)
+.post(saveSurveyAnswers);
 //Not Yet Implemented
 //.patch(updateUserInfo);
 

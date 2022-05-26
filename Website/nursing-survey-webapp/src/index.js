@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, } from "react-router-dom";
 import SignUp from './components/SignUp.js';
 import Login from './components/Login.js';
 import ForgotPassword from './components/ForgotPassword.js';
+import Survey from './components/Survey';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,6 +15,7 @@ root.render(
     <Routes>
 
         <Route path="/login" element={<Login />} />
+        <Route path="/survey" element={<Survey />} />
           
         <Route path="/signup" element={<SignUp />} />
           

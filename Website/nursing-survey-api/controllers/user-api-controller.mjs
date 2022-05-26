@@ -15,7 +15,7 @@ const alreadyExists = async (email, username) => {
     let userExists = false;
     await userDB.run("SELECT * FROM test WHERE username = ? OR email = ?", [email, username], function () {userExists = true });
     return userExists;
-}
+};
 
 const verifyPassword = async function(plainTextPassword, dbHashedPassword) {
     //const dbHashedPassword = this.password;

@@ -1,5 +1,7 @@
 import 'dotenv/config.js';
 //import './db.js';
+import { Nurses } from './models/nurses.model.mjs';
+import db from './models/index.mjs';
 import express, { application } from 'express'; 
 import cookieParser from 'cookie-parser'; 
 import compression from 'compression'; 
@@ -19,6 +21,20 @@ app.use(morgan('dev'));
 app.use(cors()); 
 app.use(rateLimit());
 app.use(passport.initialize());
+
+db.sequelize.sync().then(() => {
+    console.log('connected');
+})
+;
+// const nurse = await Nurses.create({
+//     FirstName: "test",
+//     LastName: "test",
+//     email: "test@gmail.com",
+//     Password: "test123",
+//     username: "test1233"
+// });
+// console.log('nurse', nurse);
+
 
 
 app.get('/', (req, res) => {
