@@ -1,6 +1,4 @@
 import 'dotenv/config.js';
-//import './db.js';
-import { Nurses } from './models/nurses.model.mjs';
 import db from './models/index.mjs';
 import express, { application } from 'express'; 
 import cookieParser from 'cookie-parser'; 
