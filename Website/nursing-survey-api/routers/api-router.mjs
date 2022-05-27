@@ -1,6 +1,6 @@
-import express, { Router } from 'express';
+import express from 'express';
 import passport from 'passport';
-import { getSurveyQuestions, saveSurveyAnswers } from '../controllers/survey-api-controller.mjs';
+import { getWeeklyQuestions, postWeeklySurvey } from '../controllers/survey-api-controller.mjs';
 import {registerNewUser, logInUser} from '../controllers/user-api-controller.mjs';
 
 const router = express.Router();
@@ -31,9 +31,9 @@ router.route('/login')
 // .get(getEndDayData)
 // .patch(editEndDayData);
 
-// router.route('/weeklysurvey')
-// .post(postWeeklySurvey)
-// .get(getWeeklyData)
+router.route('/weeklysurvey')
+.post(postWeeklySurvey)
+.get(getWeeklyQuestions)
 // .patch(updateWeeklyData)
 
 // router.route('/researcher')

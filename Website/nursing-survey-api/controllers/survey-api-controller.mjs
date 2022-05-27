@@ -3,7 +3,7 @@ import { Survey } from '../models/Survey.model.mjs';
 import {SurveyQuestion} from '../models/survey-question.model.mjs';
 import { SurveyAnswer } from '../models/surveyanswer.model.mjs';
 
-const getSurveyQuestions = async (req, res) => {
+const getWeeklyQuestions = async (req, res) => {
     const [surveys, metadata] = await db.sequelize.query(`SELECT q.id as qID, q.questionText, oa.Id as answerId, oa.AnswerText FROM mydb.question_answer qa INNER JOIN mydb.question q ON qa.Question_Id = q.id 
     LEFT JOIN mydb.offered_answer oa ON qa.OfferedAnswer_Id=oa.Id`);
     const map = new Map();
@@ -25,7 +25,7 @@ const getSurveyQuestions = async (req, res) => {
     res.status(200).json([...map.values()]);
 };
 
-const saveSurveyAnswers = async (req, res) => {
+const postWeeklySurvey = async (req, res) => {
     const surveyData = req.body;
     try {
         
@@ -58,5 +58,5 @@ const saveSurveyAnswers = async (req, res) => {
 };
 
 
-export { getSurveyQuestions, saveSurveyAnswers };
+export { getWeeklyQuestions, postWeeklySurvey };
 

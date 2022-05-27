@@ -18,7 +18,7 @@ const Survey = (props) => {
     }
     const [questions, setQuestions] = useState([]);
     const [formValues, setFormValues] = useState(form);
-    const apiURL = "http://localhost:3004/api/survey_questions";
+    const apiURL = "http://localhost:3004/api/weeklysurvey";
     useEffect(async () => {
         try {
             const surveys = await axios(apiURL);
