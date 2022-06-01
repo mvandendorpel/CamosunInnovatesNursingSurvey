@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import MailIcon from '@mui/icons-material/Mail';
-import LockIcon from '@mui/icons-material/Lock';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 import axios from 'axios';
-
+import './Survey.css';
+import SurveyNavButtons from './SurveyNavButtons';
+import SurveyHeader from './SurveyHeader';
+//import './SignUp.css'
 const Survey = (props) => {
 
     const form = {
@@ -37,35 +41,48 @@ const Survey = (props) => {
     }
 
     return (
-        <div >
-            <p>Survey</p>
+        <React.Fragment >
+            <SurveyHeader />
             {
                 questions.map(q => {
                     return (
-                        <div>
-                            <div>{q.questionText}</div>
-                            {q.answers && q.answers.map((ans, index) => (
-                                <>
-                                    <input key={index} name={q.qId} onClick={(e) => {
-                                        const form = {...formValues};
-                                        form.answers.set(q.qId, {
-                                            qId: q.qId,
-                                            answer: ans.answerId
-                                        })
-                                        setFormValues(form);
-                                    }} type="radio" value={ans.answerId} />
-                                    <label  key={index} htmlFor={q.qId}>{ans.answerText}</label>
-                                </>
-                            ))}
-                            {!q.answers && <textarea onKeyUp={(e) => {
-                                 const form = {...formValues};
-                                 form.answers.set(q.qId, {
-                                     qId: q.qId,
-                                     answer: e.target.value
-                                 })
-                                 setFormValues(form);
-                            }}></textarea>}
-                        </div>
+                        <>
+                            <Typography variant="h4" component="div" gutterBottom className="SignUpHeader" sx={{ml: 3, mt: 3}}>
+                                {q.questionText}
+                            </Typography>
+                            
+                            <FormControl>
+                                <RadioGroup>
+                                    {q.answers && q.answers.map((ans, index) => (
+                                        <>
+                                            <FormControlLabel className="qRadio" label={ans.answerText} control={<Radio />} key={index} name={q.qId} sx={{ml:2,}} onClick={(e) => {
+                                                const form = {...formValues};
+                                                form.answers.set(q.qId, {
+                                                    qId: q.qId,
+                                                    answer: ans.answerId
+                                                })
+                                                setFormValues(form);
+                                            }} type="radio" value={ans.answerId} />
+                                        </>
+                                    ))}
+                                </RadioGroup>
+                            </FormControl>
+                            
+                            {!q.answers && <TextField 
+                                id="outlined-multiline-static"
+                                sx={{m:3,}}
+                                rows ={6}
+                                multiline onKeyUp={(e) => {
+                                    const form = {...formValues};
+                                    form.answers.set(q.qId, {
+                                         qId: q.qId,
+                                         answer: e.target.value
+                                    })
+                                    setFormValues(form);
+                                }}>
+                            </TextField>}
+                            <SurveyNavButtons />
+                        </ >
                     )
                 })
             }
@@ -73,12 +90,8 @@ const Survey = (props) => {
             <button style={{marginBottom: '20px'}} onClick={() => {
                 handleSubmit();
             }}>Submit</button>
-
-        </div>
-
+        </React.Fragment>
     );
 };
-
-
 
 export default Survey;

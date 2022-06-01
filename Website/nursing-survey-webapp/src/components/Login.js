@@ -33,11 +33,11 @@ const Form = ({ handleClose }) => {
   return (
     <React.Fragment>
     
-    <div className="UIBox"></div>
-    <Typography variant="h4" component="div" gutterBottom className="SignUpHeader" sx={{ml: 3, mt: 3}}>
-      Login
-    </Typography>
-    <form className="SignUp" onSubmit={handleSubmit}>
+      <div className="UIBox"></div>
+      <Typography variant="h4" component="div" gutterBottom className="SignUpHeader" sx={{ml: 3, mt: 3}}>
+        Login
+      </Typography>
+      <form className="SignUp" onSubmit={handleSubmit}>
     
     
     <TextField

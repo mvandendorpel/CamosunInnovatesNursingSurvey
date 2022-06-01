@@ -8,9 +8,9 @@ const router = express.Router();
 router.route('/users')
 .post(registerNewUser)
 
-router.route('/survey_questions')
+/* router.route('/survey_questions')
 .get(getSurveyQuestions)
-.post(saveSurveyAnswers);
+.post(saveSurveyAnswers); */
 //Not Yet Implemented
 //.patch(updateUserInfo);
 

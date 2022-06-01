@@ -47,7 +47,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `nurses`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8mb4*/;
 CREATE TABLE `nurses` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `FirstName` varchar(45) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE `nurses` (
   PRIMARY KEY (`ID`),
   UNIQUE KEY `idNurses_UNIQUE` (`ID`),
   UNIQUE KEY `Nurse_Email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +82,7 @@ CREATE TABLE `offered_answer` (
   `Id` int NOT NULL AUTO_INCREMENT,
   `AnswerText` varchar(200) NOT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,7 +139,7 @@ CREATE TABLE `question_answer` (
   KEY `offered_answer_id_fk_idx` (`OfferedAnswer_Id`),
   CONSTRAINT `offered_answer_id_fk` FOREIGN KEY (`OfferedAnswer_Id`) REFERENCES `offered_answer` (`Id`),
   CONSTRAINT `sqa_question_id_fk` FOREIGN KEY (`Question_Id`) REFERENCES `question` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -173,7 +173,7 @@ CREATE TABLE `survey` (
   CONSTRAINT `fk_Survey_fitbitData1` FOREIGN KEY (`fitbitData_id`) REFERENCES `fitbitdata` (`id`),
   CONSTRAINT `fk_Survey_nurses1` FOREIGN KEY (`nurses_ID`) REFERENCES `nurses` (`ID`),
   CONSTRAINT `fk_Survey_survey_type1` FOREIGN KEY (`survey_type_id`) REFERENCES `survey_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -202,7 +202,7 @@ CREATE TABLE `survey_question` (
   KEY `question_id_fk_idx` (`Question_Id`),
   CONSTRAINT `question_id_fk` FOREIGN KEY (`Question_Id`) REFERENCES `question` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `survey_id_fk` FOREIGN KEY (`Survey_Id`) REFERENCES `survey` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
