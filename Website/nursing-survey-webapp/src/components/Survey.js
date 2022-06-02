@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
+import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Radio from '@mui/material/Radio';
@@ -44,6 +45,10 @@ const Survey = (props) => {
     function handleNext(qid) {
         let x = document.getElementById(qid); //The current question HTML element block
         x.style.display = 'none'; //Hides it
+        console.log(qid);
+        if (qid === '11') { //Hardcoded for this quiz length, TODO: Find new solution for variable length quizzes.
+            handleSubmit();
+        }
     }
 
     function handleBack(qid) {
@@ -52,12 +57,14 @@ const Survey = (props) => {
 
     }
 
+    const StyledButton = styled(Button)({
+        backgroundColor: '#214971',
+    });
+
     return (
         <React.Fragment >
             <SurveyHeader />
-            
             {
-                
                 questions.map(q => {
                     return (
                         <div id={q.qId} className="question">
@@ -65,7 +72,7 @@ const Survey = (props) => {
                                 {q.questionText}
                             </Typography>
                             
-                            <FormControl > 
+                            <FormControl > {/* Creates radio-based questions */}
                                 <RadioGroup>
                                     {q.answers && q.answers.map((ans, index) => (
                                         <>
@@ -74,7 +81,9 @@ const Survey = (props) => {
                                                 form.answers.set(q.qId, {
                                                     qId: q.qId,
                                                     answer: ans.answerId
+                                                    
                                                 })
+                                                console.log(ans.answerId);
                                                 setFormValues(form);
                                             }} type="radio" value={ans.answerId} />
                                         </>
@@ -82,11 +91,12 @@ const Survey = (props) => {
                                 </RadioGroup>
                             </FormControl>
                             
-                            {!q.answers && <TextField 
+                            {!q.answers && <TextField /* Creates textbox-based questions */
                                 id="outlined-multiline-static"
-                                sx={{m:3,}}
-                                rows ={6}
-                                multiline onKeyUp={(e) => {
+                                sx={{ml:2.5, mr: 2.5, mt: 1, mb: 1}}
+                                rows={6}
+                                multiline 
+                                onKeyUp={(e) => {
                                     const form = {...formValues};
                                     form.answers.set(q.qId, {
                                          qId: q.qId,
@@ -95,18 +105,17 @@ const Survey = (props) => {
                                     setFormValues(form);
                                 }}>
                             </TextField>}
-                            <Stack className="ButtonStack" spacing={16} direction="row" container alignItems="center" justifyContent="center">
-                                <Button variant="outlined" onClick={() => {handleBack(q.qId)}}>Back</Button>
-                                <Button variant="contained" onClick={() => {handleNext(q.qId)}}>Next</Button>
+                            <Stack className="ButtonStack" spacing={16} direction="row" container alignItems="center" justifyContent="center"> {/* Back and next navigation buttons */}
+                                <Button variant="outlined" disabled={q.qId === 1} onClick={() => {handleBack(q.qId)}}>Back</Button> {/* Submits to the server after completing the last question */}
+                                <StyledButton variant="contained" className="NextButton" disabled={q.answers == null} onClick={() => {handleNext(q.qId)}}>Next</StyledButton>
                             </Stack>
-                            {console.log(q.qId)}
                         </div >
                     )
                 })
             }
-            <button style={{marginBottom: '20px'}} onClick={() => {
+            {/* <button style={{marginBottom: '20px'}} onClick={() => {
                 handleSubmit();
-            }}>Submit</button>
+            }}>Submit</button> */}
             <>
                 
             </ >

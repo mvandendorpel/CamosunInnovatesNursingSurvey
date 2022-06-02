@@ -2,8 +2,9 @@
     width: 10%;
 }
 
-.MuiTypography-root {
+.MuiTypography-root { /* Header Text */
     font-family: unset;
+    width: 90%;
 }
 .css-1eqxiuy-MuiTypography-root {
     font-family: unset;
