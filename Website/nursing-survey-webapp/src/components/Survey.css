@@ -9,3 +9,13 @@
     font-family: unset;
   
 }
+
+.question{
+    height: 100vh;
+}
+
+html, body {margin: 0; height: 100%; overflow: hidden} /* Disables scrolling */
+
+.ButtonStack {
+    padding: 20px;
+}

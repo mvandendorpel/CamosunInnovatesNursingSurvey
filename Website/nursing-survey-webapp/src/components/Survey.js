@@ -9,8 +9,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import axios from 'axios';
 import './Survey.css';
-import SurveyNavButtons from './SurveyNavButtons';
 import SurveyHeader from './SurveyHeader';
+import Stack from '@mui/material/Stack';
+
 //import './SignUp.css'
 const Survey = (props) => {
 
@@ -40,18 +41,31 @@ const Survey = (props) => {
         console.log('res', res);
     }
 
+    function handleNext(qid) {
+        let x = document.getElementById(qid); //The current question HTML element block
+        x.style.display = 'none'; //Hides it
+    }
+
+    function handleBack(qid) {
+        let x = document.getElementById(qid -= 1); //The previous question
+        x.style.display = 'block'; //Shows it
+
+    }
+
     return (
         <React.Fragment >
             <SurveyHeader />
+            
             {
+                
                 questions.map(q => {
                     return (
-                        <>
-                            <Typography variant="h4" component="div" gutterBottom className="SignUpHeader" sx={{ml: 3, mt: 3}}>
+                        <div id={q.qId} className="question">
+                            <Typography variant="h4" component="div" gutterBottom sx={{ml: 3, mt: 3}}> {/* Question text */}
                                 {q.questionText}
                             </Typography>
                             
-                            <FormControl>
+                            <FormControl > 
                                 <RadioGroup>
                                     {q.answers && q.answers.map((ans, index) => (
                                         <>
@@ -81,17 +95,29 @@ const Survey = (props) => {
                                     setFormValues(form);
                                 }}>
                             </TextField>}
-                            <SurveyNavButtons />
-                        </ >
+                            <Stack className="ButtonStack" spacing={16} direction="row" container alignItems="center" justifyContent="center">
+                                <Button variant="outlined" onClick={() => {handleBack(q.qId)}}>Back</Button>
+                                <Button variant="contained" onClick={() => {handleNext(q.qId)}}>Next</Button>
+                            </Stack>
+                            {console.log(q.qId)}
+                        </div >
                     )
                 })
             }
-
             <button style={{marginBottom: '20px'}} onClick={() => {
                 handleSubmit();
             }}>Submit</button>
+            <>
+                
+            </ >
         </React.Fragment>
+
+        
     );
+
+    
 };
+
+
 
 export default Survey;
