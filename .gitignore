@@ -1,3 +1,7 @@
 
 Website/nursing-survey-api/.env
 Website/nursing-survey-api/.env
+*.mwb
+Documentation/CINS-SQL-Model.mwb.bak
+Website/mydb.db
+Documentation/CINS-SQL-Model.mwb
