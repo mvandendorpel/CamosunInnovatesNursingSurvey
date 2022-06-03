@@ -9,7 +9,7 @@ import mysql from 'mysql';
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'cins',
+    database: 'mydb',
     password: ''
 
 })
