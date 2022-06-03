@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -24,7 +23,7 @@ const Survey = (props) => {
     }
     const [questions, setQuestions] = useState([]);
     const [formValues, setFormValues] = useState(form);
-    const [filled, isFilled] = useState(false);
+    const [filled, isFilled] = useState(false); //Used for next button disabling
     const apiURL = "http://localhost:3004/api/weeklysurvey";
     useEffect(async () => {
         try {

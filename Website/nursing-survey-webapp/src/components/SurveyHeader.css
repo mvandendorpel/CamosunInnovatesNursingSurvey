@@ -1,5 +1,17 @@
 .survey-header{
     position: absolute;
-  top: 8px;
-  left: 16px;
+  
+}
+
+.profile-pic{
+    position: absolute;
+    float: right;
+    right: 0.8rem;
+    top: 15px;
+    width: 56px;
+    height: 56px;
+}
+
+.MuiMenuItem-gutters {
+    width: 100%;
 }
