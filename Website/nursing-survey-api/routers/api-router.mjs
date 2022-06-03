@@ -9,8 +9,8 @@ router.route('/users')
 .post(registerNewUser)
 
 router.route('/survey_questions')
-.get(getSurveyQuestions)
-.post(saveSurveyAnswers);
+//.get(getSurveyQuestions)
+//.post(saveSurveyAnswers);
 //Not Yet Implemented
 //.patch(updateUserInfo);
 

@@ -4,6 +4,24 @@ import LocalStrategy from 'passport-local';
 import jwt from 'jsonwebtoken'
 import {Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import argon2 from 'argon2';
+import mysql from 'mysql';
+
+var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    database: 'cins',
+    password: ''
+
+})
+
+connection.connect(function(err) {
+    if (err) {
+      console.error('error connecting: ' + err.stack);
+      return;
+    }
+   
+    console.log('connected as id ' + connection.threadId);
+  });
 
 let jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
@@ -32,8 +50,8 @@ const registerNewUser = async (req, res) => {
             const hash = await argon2.hash(req.body.password, {
                 type: argon2.argon2id
             });
-            var query = "INSERT INTO test (email, password, username) VALUES (?, ?, ?);"
-            userDB.run(query, [req.body.email, hash, req.body.username]);
+            var query = "INSERT INTO nurses (email, password, username) VALUES (?, ?, ?);"
+            connection.query(query, [req.body.email, hash, req.body.username]);
             res.status(201).send("User Created");
         }
         else {
@@ -99,15 +117,15 @@ const logInUser = (req, res) => {
 
 passport.use(new LocalStrategy(
     async (username, password, done) => {
-        var sql = "SELECT username,password FROM test WHERE username = ?";
-        userDB.get(sql, username, async (err,row) => {
+        var sql = "SELECT username,password FROM nurses WHERE username = ? LIMIT 1;";
+        connection.query(sql, username, async (err,results) => {
             if (err) {
                 console.log(err);
             }
-            if (!row) return done(null, false);
-            console.log(argon2.verify(row.password, password));
-            if(!await argon2.verify(row.password, password)) {return done(null, false);}
-            return done(null, row);
+            if (!results) return done(null, false);
+            console.log(password);
+            if(!await argon2.verify(results[0].password, password)) {return done(null, false);}
+            return done(null, results[0]);
             })
         })
     );
