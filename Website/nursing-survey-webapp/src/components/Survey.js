@@ -24,6 +24,7 @@ const Survey = (props) => {
     }
     const [questions, setQuestions] = useState([]);
     const [formValues, setFormValues] = useState(form);
+    const [filled, isFilled] = useState(false);
     const apiURL = "http://localhost:3004/api/weeklysurvey";
     useEffect(async () => {
         try {
@@ -49,6 +50,7 @@ const Survey = (props) => {
         if (qid === '11') { //Hardcoded for this quiz length, TODO: Find new solution for variable length quizzes.
             handleSubmit();
         }
+        isFilled(false);
     }
 
     function handleBack(qid) {
@@ -83,6 +85,7 @@ const Survey = (props) => {
                                                     answer: ans.answerId
                                                     
                                                 })
+                                                isFilled(true);
                                                 console.log(ans.answerId);
                                                 setFormValues(form);
                                             }} type="radio" value={ans.answerId} />
@@ -103,11 +106,12 @@ const Survey = (props) => {
                                          answer: e.target.value
                                     })
                                     setFormValues(form);
+                                    isFilled(true);
                                 }}>
                             </TextField>}
                             <Stack className="ButtonStack" spacing={16} direction="row" container alignItems="center" justifyContent="center"> {/* Back and next navigation buttons */}
                                 <Button variant="outlined" disabled={q.qId === 1} onClick={() => {handleBack(q.qId)}}>Back</Button> {/* Submits to the server after completing the last question */}
-                                <StyledButton variant="contained" className="NextButton" disabled={q.answers == null} onClick={() => {handleNext(q.qId)}}>Next</StyledButton>
+                                <StyledButton variant="contained" className="NextButton" disabled={!filled} onClick={() => {handleNext(q.qId)}}>Next</StyledButton>
                             </Stack>
                         </div >
                     )
