@@ -39,8 +39,7 @@ const Form = ({ handleClose }) => {
       </Typography>
       <form className="SignUp" onSubmit={handleSubmit}>
     
-    
-    <TextField
+    <TextField //Email text field
       margin="normal"
       label="Email"
       variant="standard"
@@ -57,7 +56,8 @@ const Form = ({ handleClose }) => {
       }}
       onChange={e => setEmail(e.target.value)}
     />
-    <TextField
+    
+    <TextField //password text field
       margin="normal"
       label="Password"
       variant="standard"
@@ -79,9 +79,6 @@ const Form = ({ handleClose }) => {
     />
     
     <div className="SubmitButton">
-      {/* <Button variant="contained" onClick={handleClose}>
-        Cancel
-      </Button> */}
       <Button type="submit" variant="contained" color="primary">
         Log In
       </Button>

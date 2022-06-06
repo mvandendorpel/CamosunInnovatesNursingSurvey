@@ -10,7 +10,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
 import './SurveyHeader.css'
 
-function stringToColor(string) {
+function stringToColor(string) { 
     let hash = 0;
     let i;
   
@@ -39,7 +39,7 @@ function stringAvatar(name) {
     };
 }
 
-const SurveyHeader = () => {
+const SurveyHeader = (props) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -51,52 +51,54 @@ const SurveyHeader = () => {
     return (
         <React.Fragment>
             <Typography className="survey-header" variant="h4" component="div" gutterBottom sx={{ml: 4.5, mt: 8, color: "white"}}>
-                Weekly Survey
-                <Tooltip title="Account settings">
-                    <IconButton aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined} onClick={handleClick} className="profile-pic" aria-label="profile">
+                {props.title}
+                
+                <Tooltip title="Account settings"> 
+                    <IconButton
+                        aria-controls={open ? 'account-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined} onClick={handleClick} className="profile-pic" aria-label="profile">
                         <Avatar {...stringAvatar('Jane Doe')} /> {/* TEMPORARY, WILL BE TAKEN FROM USER DATA */}
                     </IconButton>
                 </Tooltip>
             </Typography>
             <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                PaperProps={{
+                elevation: 0,
+                sx: {
+                    overflow: 'visible',
+                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                    mt: 1.5,
+                    '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                    },
+                    '&:before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                    },
+                },
+                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
         <MenuItem>
-          Profile
+          Profile {/* Menu items are placeholders, no functionality */}
         </MenuItem>
         <MenuItem>
           My account

@@ -31,11 +31,9 @@ const Survey = (props) => {
             console.log(surveys.data);
             setQuestions(surveys.data);
         } catch (e) { }
-
     }, []);
 
     const handleSubmit = async () => {
-        
         const surveyData = {...formValues};
         surveyData.answers = [...surveyData.answers.values()];
         const res = await axios.post(apiURL, surveyData);
@@ -58,13 +56,13 @@ const Survey = (props) => {
 
     }
 
-    const StyledButton = styled(Button)({
+    const StyledButton = styled(Button)({ //Colours the 'next' button
         backgroundColor: '#214971',
     });
 
     return (
         <React.Fragment >
-            <SurveyHeader />
+            <SurveyHeader title="Weekly Survey" /> {{/* Use the 'title' prop to edit the heading text */}}
             {
                 questions.map(q => {
                     return (
@@ -82,7 +80,6 @@ const Survey = (props) => {
                                                 form.answers.set(q.qId, {
                                                     qId: q.qId,
                                                     answer: ans.answerId
-                                                    
                                                 })
                                                 isFilled(true);
                                                 console.log(ans.answerId);
@@ -116,20 +113,11 @@ const Survey = (props) => {
                     )
                 })
             }
-            {/* <button style={{marginBottom: '20px'}} onClick={() => {
+            {/* <button style={{marginBottom: '20px'}} onClick={() => { Original submit to server button
                 handleSubmit();
             }}>Submit</button> */}
-            <>
-                
-            </ >
         </React.Fragment>
-
-        
     );
-
-    
 };
-
-
 
 export default Survey;

@@ -25,7 +25,7 @@ const Form = ({ handleClose }) => {
     try { 
       await axios.post('http://localhost:3004/api/users',{
         email: email,
-        username: (firstName+lastName),
+        username: (firstName+lastName), //TODO: FIX THIS
         password: password
       });
     } catch (e) {
@@ -38,7 +38,9 @@ const Form = ({ handleClose }) => {
     <IconButton aria-label="close" size="large" className="CloseButton" href="/login" sx={{color: 'white'}}>
       <CloseIcon className="CloseButton" />
     </IconButton>
+
     <div className="UIBox"></div>
+    
     <Typography variant="h4" component="div" gutterBottom className="SignUpHeader" sx={{ml: 3, mt: 3}}>
       Sign Up
     </Typography>
@@ -77,7 +79,7 @@ const Form = ({ handleClose }) => {
         }}
         onChange={e => setLastName(e.target.value)}
       />
-      <TextField
+      <TextField //Email text field
         margin="normal"
         label="Email"
         variant="standard"
@@ -94,7 +96,8 @@ const Form = ({ handleClose }) => {
         }}
         onChange={e => setEmail(e.target.value)}
       />
-      <TextField
+      
+      <TextField //password text field
         margin="normal"
         label="Password"
         variant="standard"
@@ -111,14 +114,11 @@ const Form = ({ handleClose }) => {
         }}
         onChange={e => setPassword(e.target.value)}
       />
+
       <div className="SubmitButton">
-        {/* <Button variant="contained" onClick={handleClose}>
-          Cancel
-        </Button> */}
-        <Button type="submit" variant="contained" color="primary">
-          Sign Up
-        </Button>
-        
+          <Button type="submit" variant="contained" color="primary">
+            Sign Up
+          </Button>  
       </div>
   </form></>
     
