@@ -62,7 +62,7 @@ const Survey = (props) => {
 
     return (
         <React.Fragment >
-            <SurveyHeader title="Weekly Survey" /> {{/* Use the 'title' prop to edit the heading text */}}
+            <SurveyHeader title="Weekly Survey" /> {/* Use the 'title' prop to edit the heading text */}
             {
                 questions.map(q => {
                     return (
