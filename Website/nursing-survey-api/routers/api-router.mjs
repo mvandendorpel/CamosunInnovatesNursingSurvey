@@ -32,8 +32,10 @@ router.route('/login')
 // .patch(editEndDayData);
 
 router.route('/weeklysurvey')
-.post(postWeeklySurvey)
-.get(getWeeklyQuestions)
+.post(postWeeklySurvey);
+
+router.route('/weeklysurvey/:surveyType')
+.get(getWeeklyQuestions);
 // .patch(updateWeeklyData)
 
 // router.route('/researcher')

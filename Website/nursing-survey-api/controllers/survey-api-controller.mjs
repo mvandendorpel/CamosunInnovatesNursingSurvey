@@ -4,10 +4,10 @@ import {SurveyQuestion} from '../models/survey-question.model.mjs';
 import { SurveyAnswer } from '../models/surveyanswer.model.mjs';
 // get all the questions and offered answers from the database
 const getWeeklyQuestions = async (req, res) => {
-    const questionType = req.body.id || 1;
+    const surveyType = req.params.surveyType || 1;
     // query to get the questions in db
     const [surveys, metadata] = await db.sequelize.query(`SELECT q.id as qID, q.questionText, q.survey_type_id, q.daily_survey_type, oa.Id as answerId, oa.AnswerText FROM mydb.question_answer qa INNER JOIN mydb.question q ON qa.Question_Id = q.id 
-    LEFT JOIN mydb.offered_answer oa ON qa.OfferedAnswer_Id=oa.Id WHERE  q.survey_type_id = ${questionType}`);
+    LEFT JOIN mydb.offered_answer oa ON qa.OfferedAnswer_Id=oa.Id WHERE  q.survey_type_id = ${surveyType}`);
     const map = new Map();
     // constructed a map to group/format the query results correctly
     /**

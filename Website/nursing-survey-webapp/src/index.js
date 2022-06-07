@@ -15,7 +15,7 @@ root.render(
     <Routes>
 
         <Route path="/login" element={<Login />} />
-        <Route path="/survey" element={<Survey />} />
+        <Route path="/survey/:surveyType" element={<Survey />} />
           
         <Route path="/signup" element={<SignUp />} />
           

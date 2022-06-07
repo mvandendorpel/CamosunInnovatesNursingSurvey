@@ -11,26 +11,33 @@ import axios from 'axios';
 import './Survey.css';
 import SurveyHeader from './SurveyHeader';
 import Stack from '@mui/material/Stack';
+import { useParams } from 'react-router-dom';
 
 //import './SignUp.css'
 const Survey = (props) => {
-
+    const { surveyType } = useParams();
     const form = {
         nurseId: 2,
         surveyDate: new Date(),
-        surveyTypeId: 1,
+        surveyTypeId: surveyType ? parseInt(surveyType) : 1,
         answers: new Map()
     }
     const [questions, setQuestions] = useState([]);
     const [formValues, setFormValues] = useState(form);
     const [filled, isFilled] = useState(false); //Used for next button disabling
-    const [dailySurveyType, setDailySurveyType] = useState(null);
+    const params = useParams();
+    const [surveyTitle, setSurveyTitle] = useState('Daily Survey');
+
     const apiURL = "http://localhost:3004/api/weeklysurvey";
+    
     useEffect(async () => {
         try {
-            const surveys = await axios(apiURL);
+            console.log('surveyType', surveyType);
+            setSurveyTitle(surveyType == 1 ? 'Daily Survey': 'Weekly Survey');
+            const surveys = await axios(`${apiURL}/${surveyType}`);
             console.log(surveys.data);
             setQuestions(surveys.data);
+            
         } catch (e) { }
     }, []);
 
@@ -68,8 +75,7 @@ const Survey = (props) => {
             answer: ans.answerId
         });
         if (qIndex === 0) {
-            setDailySurveyType(ans.answerId);
-            console.log(questions);
+         
            let filteredQuestions = [...questions].filter((q, index) => q.dailySurveyType === ans.answerId || index === 0);
            console.log('filteredQuestions', filteredQuestions);
            setQuestions(filteredQuestions);
@@ -81,7 +87,7 @@ const Survey = (props) => {
 
     return (
         <React.Fragment >
-            <SurveyHeader title="Weekly Survey" /> {/* Use the 'title' prop to edit the heading text */}
+            <SurveyHeader title={ surveyTitle} /> {/* Use the 'title' prop to edit the heading text */}
             {
                 questions.map((q, qIndex) => {
                     return (
