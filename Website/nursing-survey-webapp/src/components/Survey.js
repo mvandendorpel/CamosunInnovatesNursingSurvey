@@ -24,6 +24,7 @@ const Survey = (props) => {
     const [questions, setQuestions] = useState([]);
     const [formValues, setFormValues] = useState(form);
     const [filled, isFilled] = useState(false); //Used for next button disabling
+    const [dailySurveyType, setDailySurveyType] = useState(null);
     const apiURL = "http://localhost:3004/api/weeklysurvey";
     useEffect(async () => {
         try {
@@ -34,24 +35,24 @@ const Survey = (props) => {
     }, []);
 
     const handleSubmit = async () => {
-        const surveyData = {...formValues};
+        const surveyData = { ...formValues };
         surveyData.answers = [...surveyData.answers.values()];
         const res = await axios.post(apiURL, surveyData);
         console.log('res', res);
     }
 
-    function handleNext(qid) {
-        let x = document.getElementById(qid); //The current question HTML element block
+    function handleNext(index) {
+        let x = document.getElementById(index); //The current question HTML element block
         x.style.display = 'none'; //Hides it
-        console.log(qid);
-        if (qid === '11') { //Hardcoded for this quiz length, TODO: Find new solution for variable length quizzes.
+        console.log(index);
+        if ((questions.length - 1) === index) { //Hardcoded for this quiz length, TODO: Find new solution for variable length quizzes.
             handleSubmit();
         }
         isFilled(false);
     }
 
-    function handleBack(qid) {
-        let x = document.getElementById(qid -= 1); //The previous question
+    function handleBack(index) {
+        let x = document.getElementById(index -= 1); //The previous question
         x.style.display = 'block'; //Shows it
 
     }
@@ -60,54 +61,65 @@ const Survey = (props) => {
         backgroundColor: '#214971',
     });
 
+    const handleSelectedAnswer = (q, ans, qIndex) => {
+        const form = { ...formValues };
+        form.answers.set(q.qId, {
+            qId: q.qId,
+            answer: ans.answerId
+        });
+        if (qIndex === 0) {
+            setDailySurveyType(ans.answerId);
+            console.log(questions);
+           let filteredQuestions = [...questions].filter((q, index) => q.dailySurveyType === ans.answerId || index === 0);
+           console.log('filteredQuestions', filteredQuestions);
+           setQuestions(filteredQuestions);
+        }
+        isFilled(true);
+        console.log(ans.answerId);
+        setFormValues(form);
+    }
+
     return (
         <React.Fragment >
             <SurveyHeader title="Weekly Survey" /> {/* Use the 'title' prop to edit the heading text */}
             {
-                questions.map(q => {
+                questions.map((q, qIndex) => {
                     return (
-                        <div id={q.qId} className="question">
-                            <Typography variant="h4" component="div" gutterBottom sx={{ml: 3, mt: 3}}> {/* Question text */}
+                        <div id={qIndex} className="question">
+                            <Typography variant="h4" component="div" gutterBottom sx={{ ml: 3, mt: 3 }}> {/* Question text */}
                                 {q.questionText}
                             </Typography>
-                            
+
                             <FormControl > {/* Creates radio-based questions */}
                                 <RadioGroup>
                                     {q.answers && q.answers.map((ans, index) => (
                                         <>
-                                            <FormControlLabel className="qRadio" label={ans.answerText} control={<Radio />} key={index} name={q.qId} sx={{ml:2,}} onClick={(e) => {
-                                                const form = {...formValues};
-                                                form.answers.set(q.qId, {
-                                                    qId: q.qId,
-                                                    answer: ans.answerId
-                                                })
-                                                isFilled(true);
-                                                console.log(ans.answerId);
-                                                setFormValues(form);
+                                            <FormControlLabel className="qRadio" label={ans.answerText} control={<Radio />} key={index} name={q.qId} sx={{ ml: 2, }} onClick={(e) => {
+                                                handleSelectedAnswer(q, ans, qIndex);
                                             }} type="radio" value={ans.answerId} />
                                         </>
                                     ))}
                                 </RadioGroup>
                             </FormControl>
-                            
+
                             {!q.answers && <TextField /* Creates textbox-based questions */
                                 id="outlined-multiline-static"
-                                sx={{ml:2.5, mr: 2.5, mt: 1, mb: 1}}
+                                sx={{ ml: 2.5, mr: 2.5, mt: 1, mb: 1 }}
                                 rows={6}
-                                multiline 
+                                multiline
                                 onKeyUp={(e) => {
-                                    const form = {...formValues};
+                                    const form = { ...formValues };
                                     form.answers.set(q.qId, {
-                                         qId: q.qId,
-                                         answer: e.target.value
+                                        qId: q.qId,
+                                        answer: e.target.value
                                     })
                                     setFormValues(form);
                                     isFilled(true);
                                 }}>
                             </TextField>}
                             <Stack className="ButtonStack" spacing={16} direction="row" container alignItems="center" justifyContent="center"> {/* Back and next navigation buttons */}
-                                <Button variant="outlined" disabled={q.qId === 1} onClick={() => {handleBack(q.qId)}}>Back</Button> {/* Submits to the server after completing the last question */}
-                                <StyledButton variant="contained" className="NextButton" disabled={!filled} onClick={() => {handleNext(q.qId)}}>Next</StyledButton>
+                                <Button variant="outlined" disabled={q.qId === 1} onClick={() => { handleBack(qIndex) }}>Back</Button> {/* Submits to the server after completing the last question */}
+                                <StyledButton variant="contained" className="NextButton" disabled={!filled} onClick={() => { handleNext(qIndex) }}>Next</StyledButton>
                             </Stack>
                         </div >
                     )

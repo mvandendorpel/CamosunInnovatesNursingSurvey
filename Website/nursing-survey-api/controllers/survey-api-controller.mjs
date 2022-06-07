@@ -2,11 +2,28 @@ import db from '../models/index.mjs';
 import { Survey } from '../models/Survey.model.mjs';
 import {SurveyQuestion} from '../models/survey-question.model.mjs';
 import { SurveyAnswer } from '../models/surveyanswer.model.mjs';
-
+// get all the questions and offered answers from the database
 const getWeeklyQuestions = async (req, res) => {
-    const [surveys, metadata] = await db.sequelize.query(`SELECT q.id as qID, q.questionText, oa.Id as answerId, oa.AnswerText FROM mydb.question_answer qa INNER JOIN mydb.question q ON qa.Question_Id = q.id 
-    LEFT JOIN mydb.offered_answer oa ON qa.OfferedAnswer_Id=oa.Id`);
+    const questionType = req.body.id || 1;
+    // query to get the questions in db
+    const [surveys, metadata] = await db.sequelize.query(`SELECT q.id as qID, q.questionText, q.survey_type_id, q.daily_survey_type, oa.Id as answerId, oa.AnswerText FROM mydb.question_answer qa INNER JOIN mydb.question q ON qa.Question_Id = q.id 
+    LEFT JOIN mydb.offered_answer oa ON qa.OfferedAnswer_Id=oa.Id WHERE  q.survey_type_id = ${questionType}`);
     const map = new Map();
+    // constructed a map to group/format the query results correctly
+    /**
+     * Example question/answer format
+     * questions = [
+     * {
+     * qId: 1,
+     * questionText: 'question text',
+     * answers: [
+     *  {
+     *  answerId: 1,
+     *  answerText: 'test answer
+     * }
+     * ]
+     * }]
+     *  */ 
     surveys.forEach(q => {
         if (map.has(q.qID)) {
             let question = map.get(q.qID);
@@ -17,6 +34,7 @@ const getWeeklyQuestions = async (req, res) => {
             let ans = q.AnswerText ? [{ answerId: q.answerId, answerText: q.AnswerText }] : null;
             map.set(q.qID, {
                 qId: q.qID,
+                dailySurveyType: q.daily_survey_type,
                 questionText: q.questionText,
                 answers: ans
             });
@@ -25,10 +43,11 @@ const getWeeklyQuestions = async (req, res) => {
     res.status(200).json([...map.values()]);
 };
 
+// saves the survey information and answers from the user/nurses
 const postWeeklySurvey = async (req, res) => {
     const surveyData = req.body;
     try {
-        
+        // creates the survey info and save to the database
         const survey = await Survey.create({
             Description: "Test Description",
             surveyDate: surveyData.surveyDate.split('T')[0],
@@ -39,10 +58,12 @@ const postWeeklySurvey = async (req, res) => {
         console.log('survey', survey);
         const surveyId = survey.dataValues.id;
         for (let i = 0; i < surveyData.answers.length; i++) {
+            // creates the survey question and save to db
             const surveyQuestionId = await SurveyQuestion.create({
                 Survey_Id: surveyId,
                 Question_Id: surveyData.answers[i].qId
             });
+            // create/save the survey answer
             await SurveyAnswer.create({
                 answer: surveyData.answers[i].answer,
                 survey_question_id: surveyQuestionId.dataValues.id
