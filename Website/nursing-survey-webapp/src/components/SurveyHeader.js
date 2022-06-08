@@ -39,6 +39,11 @@ function stringAvatar(name) {
     };
 }
 
+function handleLogout(){
+  //TODO: Stub function
+  console.log("logout");
+}
+
 const SurveyHeader = (props) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -104,7 +109,7 @@ const SurveyHeader = (props) => {
           My account
         </MenuItem>
         
-        <MenuItem>
+        <MenuItem onclick={handleLogout()}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

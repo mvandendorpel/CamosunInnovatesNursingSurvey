@@ -92,7 +92,7 @@ const Survey = (props) => {
 
     return (
         <React.Fragment >
-            <SurveyHeader title={ surveyTitle} /> {/* Use the 'title' prop to edit the heading text */}
+            <SurveyHeader title={surveyTitle} /> {/* Use the 'title' prop to edit the heading text */}
             {
                 questions.map((q, qIndex) => {
                     return (
@@ -103,12 +103,10 @@ const Survey = (props) => {
 
                             <FormControl > {/* Creates radio-based questions */}
                                 <RadioGroup>
-                                    {q.answers && q.answers.map((ans, index) => (
-                                      
-                                            <FormControlLabel key={index} className="qRadio" label={ans.answerText} control={<Radio />} name={'q' + q.qId} sx={{ ml: 2, }} onClick={(e) => {
-                                                handleSelectedAnswer(q, ans, qIndex);
-                                            }} type="radio" value={ans.answerId} />
-                                       
+                                    {q.answers && q.answers.map((ans, index) => (         
+                                        <FormControlLabel key={index} className="qRadio" label={ans.answerText} control={<Radio />} name={'q' + q.qId} sx={{ ml: 2, }} onClick={(e) => {
+                                            handleSelectedAnswer(q, ans, qIndex);
+                                        }} type="radio" value={ans.answerId} />     
                                     ))}
                                 </RadioGroup>
                             </FormControl>
