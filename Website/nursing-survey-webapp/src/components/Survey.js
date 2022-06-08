@@ -30,7 +30,12 @@ const Survey = (props) => {
 
     const apiURL = "http://localhost:3004/api/weeklysurvey";
     
-    useEffect(async () => {
+    useEffect(() => {
+        getSurveyQuestions();
+    }, []);
+
+
+    const getSurveyQuestions = async () => {
         try {
             console.log('surveyType', surveyType);
             setSurveyTitle(surveyType == 1 ? 'Daily Survey': 'Weekly Survey');
@@ -39,7 +44,7 @@ const Survey = (props) => {
             setQuestions(surveys.data);
             
         } catch (e) { }
-    }, []);
+    };
 
     const handleSubmit = async () => {
         const surveyData = { ...formValues };
@@ -91,7 +96,7 @@ const Survey = (props) => {
             {
                 questions.map((q, qIndex) => {
                     return (
-                        <div id={qIndex} className="question">
+                        <div id={qIndex} className="question" key={qIndex}>
                             <Typography variant="h4" component="div" gutterBottom sx={{ ml: 3, mt: 3 }}> {/* Question text */}
                                 {q.questionText}
                             </Typography>
@@ -99,11 +104,11 @@ const Survey = (props) => {
                             <FormControl > {/* Creates radio-based questions */}
                                 <RadioGroup>
                                     {q.answers && q.answers.map((ans, index) => (
-                                        <>
-                                            <FormControlLabel className="qRadio" label={ans.answerText} control={<Radio />} key={index} name={q.qId} sx={{ ml: 2, }} onClick={(e) => {
+                                      
+                                            <FormControlLabel key={index} className="qRadio" label={ans.answerText} control={<Radio />} name={'q' + q.qId} sx={{ ml: 2, }} onClick={(e) => {
                                                 handleSelectedAnswer(q, ans, qIndex);
                                             }} type="radio" value={ans.answerId} />
-                                        </>
+                                       
                                     ))}
                                 </RadioGroup>
                             </FormControl>
@@ -123,7 +128,7 @@ const Survey = (props) => {
                                     isFilled(true);
                                 }}>
                             </TextField>}
-                            <Stack className="ButtonStack" spacing={16} direction="row" container alignItems="center" justifyContent="center"> {/* Back and next navigation buttons */}
+                            <Stack className="ButtonStack" spacing={16} direction="row" container="true" alignItems="center" justifyContent="center"> {/* Back and next navigation buttons */}
                                 <Button variant="outlined" disabled={q.qId === 1} onClick={() => { handleBack(qIndex) }}>Back</Button> {/* Submits to the server after completing the last question */}
                                 <StyledButton variant="contained" className="NextButton" disabled={!filled} onClick={() => { handleNext(qIndex) }}>Next</StyledButton>
                             </Stack>
