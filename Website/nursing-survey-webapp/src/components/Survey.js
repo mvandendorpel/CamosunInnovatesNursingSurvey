@@ -28,6 +28,9 @@ const Survey = (props) => {
     const params = useParams();
     const [surveyTitle, setSurveyTitle] = useState('Daily Survey');
 
+    const [answers, setAnswers] = useState([]); // state to track questions ans answers
+    const [formSubmitted, setFormSubmitted] = useState(false); // state to track when the form is submitted
+
     const apiURL = "http://localhost:3004/api/weeklysurvey";
     
     useEffect(() => {
@@ -51,6 +54,7 @@ const Survey = (props) => {
         surveyData.answers = [...surveyData.answers.values()];
         const res = await axios.post(apiURL, surveyData);
         console.log('res', res);
+        setFormSubmitted(true); // updates the state to show that the form is submitted
     }
 
     function handleNext(index) {
@@ -80,11 +84,13 @@ const Survey = (props) => {
             answer: ans.answerId
         });
         if (qIndex === 0) {
-         
            let filteredQuestions = [...questions].filter((q, index) => q.dailySurveyType === ans.answerId || index === 0);
            console.log('filteredQuestions', filteredQuestions);
            setQuestions(filteredQuestions);
         }
+        const queAns = {question: q.questionText, answer: ans.answerText}; // an object for the current selected answer for the current question
+        answers[qIndex] = queAns; // updates the answers using the index of the question
+        setAnswers(answers); // updates the answers state
         isFilled(true);
         console.log(ans.answerId);
         setFormValues(form);
@@ -93,6 +99,12 @@ const Survey = (props) => {
     return (
         <React.Fragment >
             <SurveyHeader title={ surveyTitle} /> {/* Use the 'title' prop to edit the heading text */}
+            
+            {/* when the form is submitted, this loops through the questions and their selected answers and displays them */}
+            {formSubmitted && answers.map((item, i) => (
+                <p>Question {i+1} - {item.question} - {item.answer} </p>
+            ))}
+
             {
                 questions.map((q, qIndex) => {
                     return (
@@ -124,6 +136,9 @@ const Survey = (props) => {
                                         qId: q.qId,
                                         answer: e.target.value
                                     })
+                                    const queAns = {question: q.questionText, answer: e.target.value};
+                                    answers[qIndex] = queAns;
+                                    setAnswers(answers);                                    
                                     setFormValues(form);
                                     isFilled(true);
                                 }}>
