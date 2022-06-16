@@ -69,8 +69,13 @@ const postWeeklySurvey = async (req, res) => {
                 survey_question_id: surveyQuestionId.dataValues.id
             });
         }
+        const query  = `SELECT q.*, sa.answer FROM mydb.survey s INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id
+        INNER JOIN question q ON q.id = sq.Question_Id
+        INNER JOIN surveyanswer sa ON sq.id=sa.survey_question_id 
+        WHERE s.Id = ${surveyId}`;
+        const [surveyResult, metadata] = await db.sequelize.query(query);
 
-        res.status(201).send("Success");
+        res.status(201).json(surveyResult);
     } catch (error) {
         console.log(error)
         res.status(500).send("Error");
