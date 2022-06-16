@@ -1,4 +1,3 @@
-import sqlite3 from 'sqlite3';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import jwt from 'jsonwebtoken'
@@ -8,9 +7,9 @@ import mysql from 'mysql';
 
 var connection = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
+    user: 'api',
     database: 'mydb',
-    password: ''
+    password: 'N/=Fb5F8g-xPB\<y'
 
 })
 
@@ -27,7 +26,7 @@ let jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = process.env.JWT_SECRET;
 
-const userDB = new sqlite3.Database('auth_test.db');
+
 
 const alreadyExists = async (email, username) => {
     let userExists = false;
