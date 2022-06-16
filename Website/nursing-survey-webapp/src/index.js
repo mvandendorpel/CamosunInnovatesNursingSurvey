@@ -8,12 +8,15 @@ import SignUp from './components/SignUp.js';
 import Login from './components/Login.js';
 import ForgotPassword from './components/ForgotPassword.js';
 import Survey from './components/Survey';
+import RichSample from './components/RichSample.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  <>
+  
   <BrowserRouter>
     <Routes>
-
+        <Route path="/" element={<RichSample/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/survey/:surveyType" element={<Survey />} />
           
@@ -25,6 +28,7 @@ root.render(
     <App />
     
   </BrowserRouter>
+  </>
 );
 
 // If you want to start measuring performance in your app, pass a function
