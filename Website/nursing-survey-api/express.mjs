@@ -49,10 +49,6 @@ app.use(passport.initialize());
 
 
 app.get('/', (req, res) => {
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     res.send("Node.js server is live");
     next();
 })

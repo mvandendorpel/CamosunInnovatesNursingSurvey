@@ -28,12 +28,9 @@ const Survey = (props) => {
     const params = useParams();
     const [surveyTitle, setSurveyTitle] = useState('Daily Survey');
 
-<<<<<<< Updated upstream
     const [answers, setAnswers] = useState([]); // state to track questions ans answers
     const [formSubmitted, setFormSubmitted] = useState(false); // state to track when the form is submitted
 
-=======
->>>>>>> Stashed changes
     const apiURL = "http://10.51.253.2:3004/api/weeklysurvey";
     
     useEffect(() => {
