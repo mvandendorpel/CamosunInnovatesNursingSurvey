@@ -36,10 +36,7 @@ db.sequelize.sync().then(() => {
 
 
 app.get('/', (req, res) => {
-    express.urlencoded();
-    cors({
-        origin: 'http://localhost3004'
-    })
+
     res.send("Node.js server is live");
 })
 

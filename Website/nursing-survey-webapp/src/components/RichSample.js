@@ -24,10 +24,10 @@ function RichSample(){
                 </Stack>
                 <Stack spacing={3} direction="row" sx={{justifyContent: "center", minWidth: '70%', mt:2}}>
 
-                    <Button component={Link} to="/survey/1" variant="contained" color="primary" onClick="window.location.reload();">
+                    <Button component={Link} to="/survey/1" variant="contained" color="primary" OnClick="window.location.reload();">
                         Daily Survey
                     </Button>
-                    <Button component={Link} to="/survey/2" variant="contained" color="primary" onClick="window.location.reload();">
+                    <Button component={Link} to="/survey/2" variant="contained" color="primary" OnClick="window.location.reload();">
                         Weekly Survey
                     </Button>
                 </Stack>

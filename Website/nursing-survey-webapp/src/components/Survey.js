@@ -31,7 +31,7 @@ const Survey = (props) => {
     const [answers, setAnswers] = useState([]); // state to track questions ans answers
     const [formSubmitted, setFormSubmitted] = useState(false); // state to track when the form is submitted
 
-    const apiURL = "http://localhost:3004/api/weeklysurvey";
+    const apiURL = "http://10.51.253.2:3004/api/weeklysurvey";
     
     useEffect(() => {
         getSurveyQuestions();
