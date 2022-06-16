@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import db from './index.mjs';
-export const Nurses = db.sequelize.define('nurses', {
+export const User = db.sequelize.define('user', {
     ID:DataTypes.INTEGER,
     FirstName: DataTypes.STRING,
     LastName: DataTypes.STRING,

@@ -54,6 +54,7 @@ const Survey = (props) => {
         surveyData.answers = [...surveyData.answers.values()];
         const res = await axios.post(apiURL, surveyData);
         console.log('res', res);
+        setAnswers(res.data);
         setFormSubmitted(true); // updates the state to show that the form is submitted
     }
 
@@ -81,16 +82,16 @@ const Survey = (props) => {
         const form = { ...formValues };
         form.answers.set(q.qId, {
             qId: q.qId,
-            answer: ans.answerId
+            answer: ans.answerText
         });
         if (qIndex === 0) {
            let filteredQuestions = [...questions].filter((q, index) => q.dailySurveyType === ans.answerId || index === 0);
            console.log('filteredQuestions', filteredQuestions);
            setQuestions(filteredQuestions);
         }
-        const queAns = {question: q.questionText, answer: ans.answerText}; // an object for the current selected answer for the current question
-        answers[qIndex] = queAns; // updates the answers using the index of the question
-        setAnswers(answers); // updates the answers state
+        // const queAns = {question: q.questionText, answer: ans.answerText}; // an object for the current selected answer for the current question
+        // answers[qIndex] = queAns; // updates the answers using the index of the question
+        // setAnswers(answers); // updates the answers state
         isFilled(true);
         console.log(ans.answerId);
         setFormValues(form);
@@ -102,7 +103,7 @@ const Survey = (props) => {
             
             {/* when the form is submitted, this loops through the questions and their selected answers and displays them */}
             {formSubmitted && answers.map((item, i) => (
-                <p>Question {i+1} - {item.question} - {item.answer} </p>
+                <p key={i}>Question {i+1} - {item.questionText} - {item.answer} </p>
             ))}
 
             {
@@ -136,9 +137,9 @@ const Survey = (props) => {
                                         qId: q.qId,
                                         answer: e.target.value
                                     })
-                                    const queAns = {question: q.questionText, answer: e.target.value};
-                                    answers[qIndex] = queAns;
-                                    setAnswers(answers);                                    
+                                    // const queAns = {question: q.questionText, answer: e.target.value};
+                                    // answers[qIndex] = queAns;
+                                    // setAnswers(answers);                                    
                                     setFormValues(form);
                                     isFilled(true);
                                 }}>
