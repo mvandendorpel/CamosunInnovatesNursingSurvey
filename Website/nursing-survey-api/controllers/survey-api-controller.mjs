@@ -39,7 +39,9 @@ const postWeeklySurvey = async (req, res) => {
             surveyDate: surveyData.surveyDate.split('T')[0],
             nurses_ID: surveyData.nurseId,
             survey_type_id: surveyData.surveyTypeId,
-            fitbitData_id: null
+            fitbitData_id: null,
+            dateStarted: surveyData.dateStarted,
+            dateCompleted: surveyData.dateCompleted
         });
         console.log('survey', survey);
         const surveyId = survey.dataValues.id;

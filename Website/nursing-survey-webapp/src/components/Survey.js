@@ -12,6 +12,10 @@ import './Survey.css';
 import SurveyHeader from './SurveyHeader';
 import Stack from '@mui/material/Stack';
 import { useParams } from 'react-router-dom';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DateTimePicker } from '@mui/x-date-pickers';
+import moment from 'moment';
 
 //import './SignUp.css'
 const Survey = (props) => {
@@ -20,7 +24,10 @@ const Survey = (props) => {
         nurseId: 2,
         surveyDate: new Date(),
         surveyTypeId: surveyType ? parseInt(surveyType) : 1,
-        answers: new Map()
+        answers: new Map(),
+        dateStarted: new Date(),
+        startShift: new Date(),
+        endShift:  new Date()
     }
     const [questions, setQuestions] = useState([]);
     const [formValues, setFormValues] = useState(form);
@@ -30,7 +37,8 @@ const Survey = (props) => {
 
     const [answers, setAnswers] = useState([]); // state to track questions ans answers
     const [formSubmitted, setFormSubmitted] = useState(false); // state to track when the form is submitted
-
+    const [startShiftValue, setStartShiftValue] = useState(form.startShift);
+    const [endShiftValue, setEndShiftValue] = useState(form.endShift);
     const apiURL = "http://10.51.253.2:3004/api/weeklysurvey";
     
     useEffect(() => {
@@ -52,6 +60,7 @@ const Survey = (props) => {
     const handleSubmit = async () => {
         const surveyData = { ...formValues };
         surveyData.answers = [...surveyData.answers.values()];
+        surveyData.dateCompleted = new Date();
         const res = await axios.post(apiURL, surveyData);
         console.log('res', res);
         setAnswers(res.data);
@@ -126,7 +135,7 @@ const Survey = (props) => {
                                 </RadioGroup>
                             </FormControl>
 
-                            {!q.answers && <TextField /* Creates textbox-based questions */
+                            {!q.answers && q.qId != 2 && <TextField /* Creates textbox-based questions */
                                 id="outlined-multiline-static"
                                 sx={{ ml: 2.5, mr: 2.5, mt: 1, mb: 1 }}
                                 rows={6}
@@ -144,6 +153,40 @@ const Survey = (props) => {
                                     isFilled(true);
                                 }}>
                             </TextField>}
+                            {!q.answers && q.qId == 2 && <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <DateTimePicker label="Start Shift" value={startShiftValue} onChange={(value) => {
+                                    setStartShiftValue(value);
+                                    const form = { ...formValues };
+                                    form.startShift = value;
+                                    const filled = !!(form.startShift && form.endShift);
+                                    const start = moment(form.startShift).format('YYYY-MM-DD hh:mm:ss');
+                                    const end = moment(form.endShift).format('YYYY-MM-DD hh:mm:ss');
+                                    if (filled) {
+                                        form.answers.set(q.qId, {
+                                            qId: q.qId,
+                                            answer: `${start} - ${end}`
+                                        })
+                                    }
+                                    isFilled(filled);
+                                    setFormValues(form);
+                                }} renderInput={(params) => <TextField {...params}/>} />
+                                <DateTimePicker label="End Shift" value={endShiftValue} onChange={(value) => {
+                                    setEndShiftValue(value);
+                                    const form = { ...formValues };
+                                    form.endShift = value;
+                                    const filled = !!(form.startShift && form.endShift);
+                                    const start = moment(form.startShift).format('YYYY-MM-DD hh:mm:ss');
+                                    const end = moment(form.endShift).format('YYYY-MM-DD hh:mm:ss');
+                                    if (filled) {
+                                        form.answers.set(q.qId, {
+                                            qId: q.qId,
+                                            answer: `${start} - ${end}`
+                                        })
+                                    }
+                                    isFilled(filled);
+                                    setFormValues(form);
+                                }} renderInput={(params) => <TextField {...params}/>} />
+                                </LocalizationProvider>}
                             <Stack className="ButtonStack" spacing={16} direction="row" container="true" alignItems="center" justifyContent="center"> {/* Back and next navigation buttons */}
                                 <Button variant="outlined" disabled={q.qId === 1} onClick={() => { handleBack(qIndex) }}>Back</Button> {/* Submits to the server after completing the last question */}
                                 <StyledButton variant="contained" className="NextButton" disabled={!filled} onClick={() => { handleNext(qIndex) }}>Next</StyledButton>

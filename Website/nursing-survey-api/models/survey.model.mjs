@@ -6,7 +6,9 @@ export const Survey = db.sequelize.define('survey', {
     surveyDate: DataTypes.STRING,
     nurses_ID: DataTypes.INTEGER,
     survey_type_id: DataTypes.INTEGER,
-    fitbitData_id:DataTypes.INTEGER
+    fitbitData_id:DataTypes.INTEGER,
+    dateCompleted: DataTypes.DATE,
+    dateStarted: DataTypes.DATE
 
 }, {
     createdAt: false,
