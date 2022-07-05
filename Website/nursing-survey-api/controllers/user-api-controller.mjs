@@ -4,7 +4,18 @@ import jwt from 'jsonwebtoken'
 import {Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import argon2 from 'argon2';
 import mysql from 'mysql';
+import dotenv from 'dotenv';
+import FitbitApiClient from "fitbit-node";
 
+
+dotenv.config();
+const client = new FitbitApiClient({
+    clientId: `${process.env.FB_OAUTH_ID}`,
+    clientSecret: `${process.env.FB_CLIENT_SECRET}`,
+    apiVersion: "1.2"
+})
+
+const scope = 'activity heartrate location nutrition profile settings sleep weight'
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'api',
@@ -27,10 +38,9 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = process.env.JWT_SECRET;
 
 
-
 const alreadyExists = async (email, username) => {
     let userExists = false;
-    await userDB.run("SELECT * FROM test WHERE username = ? OR email = ?", [email, username], function () {userExists = true });
+    await connection.query("SELECT * FROM user WHERE username = ? OR email = ?", [email, username], function () {userExists = true });
     return userExists;
 };
 
@@ -49,8 +59,10 @@ const registerNewUser = async (req, res) => {
             const hash = await argon2.hash(req.body.password, {
                 type: argon2.argon2id
             });
-            var query = "INSERT INTO nurses (email, password, username) VALUES (?, ?, ?);"
+            var query = "INSERT INTO user (email, password, username) VALUES (?, ?, ?);"
+            
             connection.query(query, [req.body.email, hash, req.body.username]);
+            //res.redirect(client.getAuthorizeUrl(scope, 'https://10.51.253.2:3004/fb'))
             res.status(201).send("User Created");
         }
         else {
@@ -59,6 +71,7 @@ const registerNewUser = async (req, res) => {
     }
     catch(err) {
         res.status(400).send("Bad Request.  The message in the body of the Request is either missing or malformed");
+        console.log(err);
     }
 
 }

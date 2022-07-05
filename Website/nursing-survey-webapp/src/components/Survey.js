@@ -39,7 +39,7 @@ const Survey = (props) => {
     const [formSubmitted, setFormSubmitted] = useState(false); // state to track when the form is submitted
     const [startShiftValue, setStartShiftValue] = useState(form.startShift);
     const [endShiftValue, setEndShiftValue] = useState(form.endShift);
-    const apiURL = "http://10.51.253.2:3004/api/weeklysurvey";
+    const apiURL = "https://10.51.253.2:3004/api/weeklysurvey";
     
     useEffect(() => {
         getSurveyQuestions();

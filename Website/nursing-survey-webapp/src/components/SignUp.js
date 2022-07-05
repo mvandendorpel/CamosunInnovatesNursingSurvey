@@ -11,6 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
 import './SignUp.css'
 
+
 const Form = ({ handleClose }) => {
   
   // create state variables for each input
@@ -23,7 +24,7 @@ const Form = ({ handleClose }) => {
     e.preventDefault();
     console.log(firstName, lastName, email, password);
     try { 
-      await axios.post('http://localhost:3004/api/users',{
+      await axios.post('https://10.51.253.2:3004/api/users',{
         email: email,
         username: (firstName+lastName), //TODO: FIX THIS
         password: password
