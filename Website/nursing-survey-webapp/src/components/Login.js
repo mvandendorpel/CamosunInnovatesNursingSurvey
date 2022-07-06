@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import axios from 'axios';
 import './SignUp.css'
+import { useNavigate } from 'react-router-dom';
 
 const Form = ({ handleClose }) => {
   
@@ -15,17 +16,23 @@ const Form = ({ handleClose }) => {
 
   const [username, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(username, password);
     try {
-      await axios.post('https://10.51.253.2:3004/api/login', {
+      const authToken = await axios.post('https://10.51.253.2:3004/api/login', {
         username: username,
         password: password
       });
+      if (authToken) {
+        localStorage.setItem('authToken', authToken.data.token);
+        navigate('/');
+      }
     } catch (e) {
       console.log(e);
+      alert('Incorrect email or password!')
     }
   };
 

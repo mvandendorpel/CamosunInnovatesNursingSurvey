@@ -18,6 +18,7 @@ const Form = ({ handleClose }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
@@ -26,8 +27,10 @@ const Form = ({ handleClose }) => {
     try { 
       await axios.post('https://10.51.253.2:3004/api/users',{
         email: email,
-        username: (firstName+lastName), //TODO: FIX THIS
-        password: password
+        username: userName, //TODO: FIX THIS
+        password: password,
+        firstName: firstName,
+        lastName: lastName
       });
     } catch (e) {
       console.log(e);
@@ -96,6 +99,23 @@ const Form = ({ handleClose }) => {
           ),
         }}
         onChange={e => setEmail(e.target.value)}
+      />
+
+<TextField //User Name Text Field
+        margin="normal" 
+        label="Username"
+        variant="standard"
+        required
+        value={userName}
+        placeholder="e"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <PersonIcon />
+            </InputAdornment>
+          ),
+        }}
+        onChange={e => setUserName(e.target.value)}
       />
       
       <TextField //password text field

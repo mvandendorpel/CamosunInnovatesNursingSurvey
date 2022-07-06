@@ -60,8 +60,13 @@ const registerNewUser = async (req, res) => {
                 type: argon2.argon2id
             });
             var query = "INSERT INTO user (email, password, username) VALUES (?, ?, ?);"
-            
-            connection.query(query, [req.body.email, hash, req.body.username]);
+        
+            connection.query(query, [req.body.email, hash, req.body.username],(err, result, fields) => {
+                console.log('INSERT ', result)
+                const userId = result.insertId;
+                const insertUserInfo = "INSERT INTO user_info (firstName, lastName, userID) VALUES(?,?,?);"
+                connection.query(insertUserInfo, [req.body.firstName, req.body.lastName, userId]);
+            });
             //res.redirect(client.getAuthorizeUrl(scope, 'https://10.51.253.2:3004/fb'))
             res.status(201).send("User Created");
         }
@@ -128,9 +133,9 @@ const logInUser = (req, res) => {
 
 
 passport.use(new LocalStrategy(
-    async (username, password, done) => {
-        var sql = "SELECT username,password FROM nurses WHERE username = ? LIMIT 1;";
-        connection.query(sql, username, async (err,results) => {
+    async (email, password, done) => {
+        var sql = "SELECT email,password FROM user WHERE email = ? LIMIT 1;";
+        connection.query(sql, email, async (err,results) => {
             if (err) {
                 console.log(err);
             }
