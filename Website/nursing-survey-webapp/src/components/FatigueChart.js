@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
   const itemsEg1 = [
     {
@@ -34,7 +35,25 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Resp
 
 const items = itemsEg1;
 
-const FatigueChart = () => (
+const FatigueChart = () => {
+
+  const [data, setData] = useState([]);
+  const apiURL = "https://10.51.253.2:3004/api/allsurveys";
+  const getFatigueData = async () => {
+    try {
+        const fatigueData = await axios(apiURL);
+        console.log(fatigueData);
+        setData(fatigueData.date);
+    } catch (e) {
+        console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    getFatigueData();
+    }, []); 
+
+
   <>
     <ResponsiveContainer height={200} width="100%">
       <BarChart
@@ -61,7 +80,7 @@ const FatigueChart = () => (
       </BarChart>
     </ResponsiveContainer>
   </>
-);
+}
 
 
 export default FatigueChart;
