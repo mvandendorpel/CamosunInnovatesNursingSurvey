@@ -9,25 +9,27 @@ import Login from './components/Login.js';
 import ForgotPassword from './components/ForgotPassword.js';
 import Survey from './components/Survey';
 import RichSample from './components/RichSample.js';
-
+import Profile from './components/Profile.js';
+import UserStats from './components/UserStats.js';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
   
-  <BrowserRouter>
-    <Routes>
-        <Route path="/" element={<RichSample/>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/survey/:surveyType" element={<Survey />} />
-          
-        <Route path="/signup" element={<SignUp />} />
-          
-        <Route path="/forgot" element={<ForgotPassword />} />
-          
-      </Routes>
-    <App />
-    
-  </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+          <Route path="/" element={<RichSample/>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/survey/:surveyType" element={<Survey />} />
+            
+          <Route path="/signup" element={<SignUp />} />
+            
+          <Route path="/forgot" element={<ForgotPassword />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/stats" element={<UserStats />} />
+        </Routes>
+      <App />
+      
+    </BrowserRouter>
   </>
 );
 

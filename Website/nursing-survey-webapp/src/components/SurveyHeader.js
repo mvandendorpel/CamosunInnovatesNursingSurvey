@@ -8,6 +8,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
+import { Link } from "react-router-dom";
+
 import './SurveyHeader.css'
 
 function stringToColor(string) { 
@@ -102,14 +104,15 @@ const SurveyHeader = (props) => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-        <MenuItem>
-          Profile {/* Menu items are placeholders, no functionality */}
+        <MenuItem button component={Link} to="/profile">
+          Profile 
+         
         </MenuItem>
         <MenuItem>
           My account
         </MenuItem>
         
-        <MenuItem onclick={handleLogout()}>
+        <MenuItem onClick={handleLogout()}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
