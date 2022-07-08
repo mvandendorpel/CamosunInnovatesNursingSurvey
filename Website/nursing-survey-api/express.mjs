@@ -10,6 +10,7 @@ import rateLimit from 'express-rate-limit';
 import passport from 'passport';
 import FitbitApiClient from "fitbit-node";
 import dotenv from 'dotenv';
+import mergeJSON from 'merge-json';
 
 dotenv.config;
 const scope = 'activity heartrate location nutrition profile settings sleep weight'
@@ -43,14 +44,13 @@ const client = new FitbitApiClient({
 //     LastName: "test",
 //     email: "test@gmail.com",
 //     Password: "test123",
-//     username: "test1233"
+//     username: "test1233"12345
 // });
 // console.log('nurse', nurse);
 
 
 app.get('/', (req, res) => {
     res.send("Node.js server is live");
-    next();
 })
 
 app.get('/authorize', (req, res) => {
@@ -70,28 +70,32 @@ app.get('/fb', (req, res) => {
         })
     }
     else {
-        let date = '2022-06-03';
-        let collectedData = {};
+        let date = '2022-07-06';
+        let collectedData = [];
         client.getAccessToken(req.query.code, 'https://10.51.253.2:3004/fb').then(result => {
             client.get(`/activities/steps/date/${date}/1d/15min.json`, result.access_token).then(results => {
-                collectedData.push(results[0]);
+
+                
+                res.status(200).send(results[0]);
+                
             }).catch(err => {
-                res.status(err.status).send(err);
+                //res.status(500).send(err);
                 console.log(err);
             })
             client.get(`/activities/heart/date/${date}/1d/1min.json`, result.access_token).then(results => {
-                collectedData.push(results[0]);
+                //res.status(200).send(results[0]);
             }).catch(err => {
-                res.status(err.status).send(err);
+                //res.status(500).send(err);
                 console.log(err);
             })
             client.get(`/sleep/date/today.json`, result.access_token).then(results => {
-                res.send(results[0]);
+                //res.status(200).send(results[0]);
             }).catch(err => {
-                res.status(err.status).send(err);
+                res.status(500).send(err);
                 console.log(err);
             })
         })
+       // res.status(200).send(collectedData);
         console.log(collectedData);
         //res.send(collectedData);
     }

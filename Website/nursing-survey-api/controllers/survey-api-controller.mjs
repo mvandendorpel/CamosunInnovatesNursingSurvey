@@ -71,6 +71,41 @@ const postWeeklySurvey = async (req, res) => {
 
 };
 
+const getWeeklySurvey = async(req, res) => {
+    try {
+    const query = `SELECT s.nurses_ID,s.survey_type_id, q.id, q.questionText, sa.answer FROM mydb.survey s 
+    INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id 
+    INNER JOIN mydb.question q ON q.id=sq.Question_Id 
+    LEFT JOIN mydb.surveyanswer sa ON sa.survey_question_id=sq.id
+     WHERE DATE(s.dateCompleted) >= DATE(NOW()) - INTERVAL 7 DAY AND s.nurses_ID = ${req.query.nurses_id};`
 
-export { getWeeklyQuestions, postWeeklySurvey };
+     const [results, metadata] = await db.sequelize.query(query);
+     res.status(200).send(results);
+    }
+    catch(error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+
+}
+
+const getAllSurveys = async(req, res) => {
+    try {
+        const query = `SELECT q.*, sa.answer, q.id FROM mydb.survey s INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id
+        INNER JOIN question q ON q.id = sq.Question_Id
+        INNER JOIN surveyanswer sa ON sq.id=sa.survey_question_id 
+        WHERE s.nurses_ID = ${req.query.nurses_id}`;
+
+        const [results, metadata] = await db.sequelize.query(query);
+        res.status(200).send(results);
+    }
+    catch(error) {
+        console.log(error)
+        res.status(500).send(error);
+    }
+
+}
+
+
+export { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys };
 

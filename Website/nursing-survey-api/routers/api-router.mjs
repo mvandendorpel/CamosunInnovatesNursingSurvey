@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import passport from 'passport';
-import { getWeeklyQuestions, postWeeklySurvey } from '../controllers/survey-api-controller.mjs';
+import { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys } from '../controllers/survey-api-controller.mjs';
 import {registerNewUser, logInUser} from '../controllers/user-api-controller.mjs';
 //import {integrateFBData} from '../controllers/fb-api-controller.mjs'
 import cors from 'cors';
@@ -31,12 +31,16 @@ router.route('/login')
 //Not Yet Implemented
 //.patch(updateUserPassword);
 
+router.route('/allsurveys')
+.get(getAllSurveys);
+
 
 router.route('/weeklysurvey', cors(corsOptionsDelegate), function(req, res, next) {
     
     next();
 })
-.post(postWeeklySurvey);
+.post(postWeeklySurvey)
+.get(getWeeklySurvey);
 
 
 router.route('/weeklysurvey/:surveyType', cors(corsOptionsDelegate), function(req, res, next) {

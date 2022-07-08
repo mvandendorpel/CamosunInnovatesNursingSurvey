@@ -83,8 +83,9 @@ const registerNewUser = async (req, res) => {
 
 const logInUser = (req, res) => {
     // generates a JWT Token
+    //let payload = { "id" : "1"};
     jwt.sign(
-        { sub: req.user._id,username: req.user.username },
+        { username: req.user.username, userID: req.user.ID },
         process.env.JWT_SECRET,
         { expiresIn: '1h'},
         ( error, token) => {
@@ -92,9 +93,12 @@ const logInUser = (req, res) => {
                 res.status(400).send('Bad Request. Couldn\'t generate token.');
             } else {
                 res.status(200).json({ token: token });
+                console.log(token);
             }
         }
+        
     );
+    
 }
 
 //Not yet implemented
@@ -134,7 +138,7 @@ const logInUser = (req, res) => {
 
 passport.use(new LocalStrategy(
     async (email, password, done) => {
-        var sql = "SELECT email,password FROM user WHERE email = ? LIMIT 1;";
+        var sql = "SELECT email,password, ID FROM user WHERE email = ? LIMIT 1;";
         connection.query(sql, email, async (err,results) => {
             if (err) {
                 console.log(err);
