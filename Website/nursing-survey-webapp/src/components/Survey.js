@@ -63,7 +63,16 @@ const Survey = (props) => {
         surveyData.dateCompleted = new Date();
         const res = await axios.post(apiURL, surveyData);
         console.log('res', res);
-        setAnswers(res.data);
+        if (surveyData.surveyTypeId == 1) {
+            window.location.href =`https://10.51.253.2:3004/authorize?surveyId=${res.data}`;
+        } 
+        else {
+            setAnswers(surveyData.data);
+        }
+        
+
+        
+        
         setFormSubmitted(true); // updates the state to show that the form is submitted
     }
 

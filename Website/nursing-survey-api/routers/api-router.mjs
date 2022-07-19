@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import passport from 'passport';
 import { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys } from '../controllers/survey-api-controller.mjs';
-import {registerNewUser, logInUser} from '../controllers/user-api-controller.mjs';
+import {registerNewUser, logInUser, getUserData, getUserStats} from '../controllers/user-api-controller.mjs';
 //import {integrateFBData} from '../controllers/fb-api-controller.mjs'
 import cors from 'cors';
 
@@ -16,7 +16,7 @@ const router = express.Router();
 router.use(cors({ origin: true }));
 router.route('/users')
 .post(registerNewUser)
-
+.get(getUserData);
 // router.route('/fb')
 // .post(integrateFBData)
 
@@ -34,6 +34,14 @@ router.route('/login')
 router.route('/allsurveys')
 .get(getAllSurveys);
 
+router.route('/userstats/:userid')
+.get(getUserStats);
+
+router.route('/lastsubmission/:userid')
+//.get(getLastSurvey);
+
+router.route('/dashboard/:userid')
+//.get(getDashboardInfo);
 
 router.route('/weeklysurvey', cors(corsOptionsDelegate), function(req, res, next) {
     

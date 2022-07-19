@@ -11,6 +11,7 @@ import Survey from './components/Survey';
 import RichSample from './components/RichSample.js';
 import Profile from './components/Profile.js';
 import UserStats from './components/UserStats.js';
+import DashboardHome from './components/DashboardHome';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
@@ -18,6 +19,7 @@ root.render(
     <BrowserRouter>
       <Routes>
           <Route path="/" element={<RichSample/>} />
+          <Route path="/Dashboard" element={<DashboardHome/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/survey/:surveyType" element={<Survey />} />
             

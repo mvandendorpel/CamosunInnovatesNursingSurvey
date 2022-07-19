@@ -8,12 +8,13 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import FitbitApiClient from "fitbit-node";
 import db from '../models/index.mjs';
+import { Fitbit } from '../models/fitbit.mjs';
 
 dotenv.config();
 
 //Represents the amount of time(in hours) to collect before and after the user's work shift
-const PREWORK_PERIOD = 2;
-const POSTWORK_PERIOD = 2;
+const PREWORK_PERIOD = 120;
+const POSTWORK_PERIOD = 120;
 
 const client = new FitbitApiClient({
     clientId: `${process.env.FB_OAUTH_ID}`,
@@ -28,57 +29,106 @@ const client = new FitbitApiClient({
  * 2. The prework period set above
  * 3. the postwork period set above
  * @param  {} activityData --JSON data from Fitbit API Endpoint
- * @param  {} metric --String representing the metric that activityData represents.  ex. "steps", "heartrate"
  */
-const getIntervalData = (activityData, metric) => {
-    const query = '' //TODO: Query to get shift data
+const getIntervalData = async (activityData) => {
+    //const query = 'SELECT * FROM shiftdata' //TODO: Query to get shift data
 
-    const result = db.sequelize.query(query);
+    //const result = db.sequelize.query(query);
 
-    let startTime = new Date(result.shiftStart);
+    let startTime = new Date();
+    startTime.setHours(startTime.getHours() - 8);
     let startTimeMinutes = startTime.getMinutes();
     let startTimeHour = startTime.getHours();
+    let startTimeCheck = startTimeHour * 60 + startTimeMinutes;
 
-    let endTime = new Date(result.shiftStart);
+    let endTime = new Date();
+    endTime.setHours(endTime.getHours() - 6);
     let endTimeHour = endTime.getHours();
     let endTimeMinutes = endTime.getMinutes();
+    let endTimeCheck = endTimeHour * 60 + endTimeMinutes;
 
-    let workActivity = activityData.activities-steps-intraday.dataset.filter(function (entry) {
+    // Gather Activity Data(Steps)
+    //console.log(JSON.stringify(activityData));
+    let workActivity = await activityData.filter(function (entry) {
         let entryTime = new Date("1970-01-01 " + entry.time);
         let entryHour = entryTime.getHours();
         let entryMinutes = entryTime.getMinutes();
+        let entryCheck = entryHour * 60 + entryMinutes;
 
-        if ((entryHour >= startTimeHour && entryHour <= endTimeHour) && (entryMinutes >= startTimeMintues && entryMinutes <= endTimeHour)) {
+        if ((entryCheck >= startTimeCheck) && (entryCheck <= endTimeCheck)) {
+            //console.log(entry);
             return entry;
         }
     });
     console.log(workActivity);
 
-    let preWorkActivity = activityData.activities-steps-intraday.dataset.filter(function (entry) {
+    let preWorkActivity = await activityData.filter(function (entry) {
         let entryTime = new Date("1970-01-01 " + entry.time);
         let entryHour = entryTime.getHours();
         let entryMinutes = entryTime.getMinutes();
+        let entryCheck = entryHour * 60 + entryMinutes;
 
-        if ((entryHour  >= startTimeHour - PREWORK_PERIOD && entryHour <= startTimeHour) && (entryMinutes >= startTimeMintues && entryMinutes <= endTimeHour)) {
+        if ((entryCheck >= startTimeCheck - PREWORK_PERIOD) && (entryCheck <= startTimeCheck)) {
+            //console.log(entry);
             return entry;
         }
     })
     console.log(preWorkActivity);
-    let postWorkActivity = activityData.activities-steps-intraday.dataset.filter(function (entry) {
+    let postWorkActivity = await activityData.filter(function (entry) {
         let entryTime = new Date("1970-01-01 " + entry.time);
         let entryHour = entryTime.getHours();
         let entryMinutes = entryTime.getMinutes();
+        let entryCheck = entryHour * 60 + entryMinutes;
 
-        if ((entryHour >= endTimeHour && entryHour <= endTimeHour + POSTWORK_PERIOD) && (entryMinutes >= startTimeMintues && entryMinutes <= endTimeHour)) {
+        if ((entryCheck >= endTimeCheck) && (entryCheck <= endTimeCheck + POSTWORK_PERIOD)) {
+            //console.log(entry);
             return entry;
         }
     })
     console.log(postWorkActivity);
 
+    return [activityData, workActivity, preWorkActivity, postWorkActivity];
     //TODO: Query(ies) to input the data into the DB
 
-}
+        // const {
+        //     nurses_ID,
+        //     date,
+        //     step_activity_all,
+        //     step_activity_shift,
+        //     step_activity_preshift,
+        //     step_activity_postshift,
+        //     hr_activity_all,
+        //     hr_activity_shift,
+        //     hr_activity_preshift,
+        //     hr_activity_postshift,
+        //     sleep,
+        //     survey_ID
+        // } = req.body;
 
+        const fitbit = await Fitbit.create({
+            nurses_ID,
+            date,
+            step_activity_all,
+            step_activity_shift,
+            step_activity_preshift,
+            step_activity_postshift,
+            hr_activity_all,
+            hr_activity_shift,
+            hr_activity_preshift,
+            hr_activity_postshift,
+            sleep,
+            survey_ID
+        });
+    
+
+     //pulling fitbitdata
+     const queryFitbit = 'SELECT * FROM fitbitdata' //TODO: Query to get shift data
+
+     const fitbitResult = db.sequelize.query(queryFitbit);
+
+
+}
+export {getIntervalData};
                 
 // function checkTime() {
 //     var d = new Date(); // current time

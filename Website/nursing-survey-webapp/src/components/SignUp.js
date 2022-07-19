@@ -107,7 +107,7 @@ const Form = ({ handleClose }) => {
         variant="standard"
         required
         value={userName}
-        placeholder="e"
+        placeholder="janedoe"
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

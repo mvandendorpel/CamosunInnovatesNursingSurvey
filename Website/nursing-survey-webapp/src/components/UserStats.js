@@ -3,7 +3,9 @@ import Box from '@mui/material/Box';
 import SurveyHeader from './SurveyHeader';
 import SleepChart from './SleepChart.js';
 import FatigueChart from './FatigueChart.js';
+import HeartChart from './HeartChart.js';
 import Typography from '@mui/material/Typography';
+import "./UserStats.css";
 const UserStats = () => {
     const title = 'My Stats';
     return(
@@ -16,13 +18,14 @@ const UserStats = () => {
                 </Typography>
                 <SleepChart />
                 <Typography ml={2} variant="h6" gutterBottom component="div">
-                    Heart Rate
+                    Base Heart Rate
                 </Typography>
-                Data TBD
+                <HeartChart />
                 <Typography ml={2} variant="h6" gutterBottom component="div">
                     Fatigue Levels
                 </Typography>
                 <FatigueChart />
+                
             </Box>
             
         </>

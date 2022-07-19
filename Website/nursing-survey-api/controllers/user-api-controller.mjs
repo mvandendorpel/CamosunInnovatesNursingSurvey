@@ -6,7 +6,7 @@ import argon2 from 'argon2';
 import mysql from 'mysql';
 import dotenv from 'dotenv';
 import FitbitApiClient from "fitbit-node";
-
+import db from '../models/index.mjs';
 
 dotenv.config();
 const client = new FitbitApiClient({
@@ -101,6 +101,45 @@ const logInUser = (req, res) => {
     
 }
 
+const getUserData = async (req, res) => {
+    try {
+        //var token = jwt.decode(req.token);
+        var  query = `SELECT user.ID, user.username, user_info.firstName, user_info.lastName, user_info.dateOfBirth, user_info.city, user_info.gender FROM user INNER JOIN user_info ON user.id = user_info.userID where user.id = ${req.query.nurses_id};`; //TODO: Bettery query to get profile data
+        console.log(query);
+        const [result, metadata] = await db.sequelize.query(query);
+        console.log(result);
+        res.status(200).send(result);
+    }
+    catch(err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
+
+}
+
+const getUserStats = async(req, res) => {
+    const query = `SELECT hr_activity_all, sleep from fitbitdata WHERE nurses_ID = ${req.params.userid}`;
+    const [results, metadata] = await db.sequelize.query(query);
+
+    const sleepInfo = results.map((element) => {
+        return element.summary.stages;
+    });
+
+    const heartRateInfo = results.map((element) => {
+        return element['activities-heart'].value.restingHeartRate
+    });
+    const sleepObj = JSON.parse(sleepInfo);
+    const HRObj = JSON.parse(heartRateInfo);
+
+    const mergedData = {
+        ...sleepObj,
+        ...HRObj
+    };
+
+    console.log(JSON.stringify(mergedData));
+}   
+
+
 //Not yet implemented
 /* const updateUserPassword = async (req, res) => {
     try {
@@ -151,4 +190,6 @@ passport.use(new LocalStrategy(
         })
     );
 
-export {registerNewUser, logInUser};
+
+
+export {registerNewUser, logInUser, getUserData, getUserStats};

@@ -1,0 +1,18 @@
+@media (min-width: 780px){
+
+    .ButtonBox{
+        min-width: 30%;
+    }
+
+    .DashTitle {
+        width: unset;
+        padding-right: 160px;
+    }
+}
+
+@media (max-width: 780px){
+
+    .ButtonBox{
+        min-width: 80%;
+    }
+}

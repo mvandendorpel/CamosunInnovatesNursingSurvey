@@ -63,7 +63,8 @@ const postWeeklySurvey = async (req, res) => {
         WHERE s.Id = ${surveyId}`;
         const [surveyResult, metadata] = await db.sequelize.query(query);
 
-        res.status(201).json(surveyResult);
+        res.status(201).json(surveyId);
+        
     } catch (error) {
         console.log(error)
         res.status(500).send("Error");
@@ -104,6 +105,18 @@ const getAllSurveys = async(req, res) => {
         res.status(500).send(error);
     }
 
+}
+
+const getLastSurvey = async(req, res) => {
+    try {
+        const query = `SELECT * from survey INNER JOIN fitbitdata ON survey.nurses_ID = fitbitdata.nurses_ID ORDER BY id DESC LIMIT 1;`;
+        const [results, metadata] = await db.sequelize.query(query);
+        res.status(200).send(results[0]);
+    }
+    catch(err) {
+        console.log(err);
+        res.status(500).send(error);
+    }
 }
 
 

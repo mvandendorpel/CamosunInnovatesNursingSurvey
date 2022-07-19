@@ -28,6 +28,7 @@ const Form = ({ handleClose }) => {
       });
       if (authToken) {
         localStorage.setItem('authToken', authToken.data.token);
+        console.log('success');
         navigate('/');
       }
     } catch (e) {
@@ -71,7 +72,7 @@ const Form = ({ handleClose }) => {
       type="password"
       required
       value={password}
-      placeholder="e.g. jane.doe@example.com"
+      placeholder="********"
       helperText={<Link href="/forgot" variant="body2" underline="none" >
         {'Forgot your password?'}
       </Link>}
