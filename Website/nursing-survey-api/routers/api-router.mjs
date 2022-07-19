@@ -34,7 +34,7 @@ router.route('/login')
 router.route('/allsurveys')
 .get(getAllSurveys);
 
-router.route('/userstats/:userid')
+router.route('/userstats')
 .get(getUserStats);
 
 router.route('/lastsubmission/:userid')

@@ -118,25 +118,33 @@ const getUserData = async (req, res) => {
 }
 
 const getUserStats = async(req, res) => {
-    const query = `SELECT hr_activity_all, sleep from fitbitdata WHERE nurses_ID = ${req.params.userid}`;
-    const [results, metadata] = await db.sequelize.query(query);
+    try {
+        const query = `SELECT hr_activity_all, sleep from fitbitdata WHERE nurses_ID = ${req.query.nurses_ID}`;
+        const [results, metadata] = await db.sequelize.query(query);
+        //console.log(results[0]['hr_activity_all']['activities-heart']);
+        const sleepInfo = await results.map((element) => {
+            //console.log("Sleep Stage: " + element?.sleep?.summary?.stages);
+            
+            return element?.sleep?.summary?.stages;
+        });
+        console.log("Sleep Info: " + sleepInfo);
+        const heartRateInfo = await results.map((element) => {
+            //console.log(element['hr_activity_all']['activities-heart']);
+            return element['hr_activity_all']['activities-heart'];
+        });
 
-    const sleepInfo = results.map((element) => {
-        return element.summary.stages;
-    });
+        console.log(heartRateInfo);
+        //const sleepObj = await JSON.parse(sleepInfo);
+        //const HRObj = await JSON.parse(heartRateInfo);
 
-    const heartRateInfo = results.map((element) => {
-        return element['activities-heart'].value.restingHeartRate
-    });
-    const sleepObj = JSON.parse(sleepInfo);
-    const HRObj = JSON.parse(heartRateInfo);
+        const mergedData = sleepInfo.concat(heartRateInfo);
 
-    const mergedData = {
-        ...sleepObj,
-        ...HRObj
-    };
-
-    console.log(JSON.stringify(mergedData));
+        console.log(JSON.stringify(mergedData));
+        res.status(200).send(mergedData);
+    }
+    catch(err) {
+        console.log(err);
+    }
 }   
 
 

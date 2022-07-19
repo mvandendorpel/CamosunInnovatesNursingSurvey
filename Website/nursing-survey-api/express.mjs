@@ -125,11 +125,11 @@ app.get('/fb', async (req, res) => {
             })
         });
         console.log("Interval Data: " + JSON.stringify(sleepData));
-        const step_activity_all = stepIntervalData[0];
+        const step_activity_all = stepData;
         const step_activity_shift = stepIntervalData[1];
         const step_activity_postshift = stepIntervalData[2];
         const step_activity_preshift = stepIntervalData[3];
-        const hr_activity_all = HRIntervalData[0];
+        const hr_activity_all = HRData;
         const hr_activity_shift = HRIntervalData[1];
         const hr_activity_postshift = HRIntervalData[2];
         const hr_activity_preshift = HRIntervalData[3];
