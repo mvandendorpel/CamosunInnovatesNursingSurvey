@@ -137,9 +137,9 @@ const getUserData = async (req, res) => {
         result = result.map(user => {
             user.firstName = decrypt(user.firstName);
             user.lastName = decrypt(user.lastName);
-            user.dateOfBirth = decrypt(user.dateOfBirth);
-            user.city = decrypt(user.city);
-            user.gender = decrypt(user.gender);
+            user.dateOfBirth = user.dateOfBirth ? decrypt(user.dateOfBirth) : '';
+            user.city = user.city ? decrypt(user.city) : '';
+            user.gender = user.gender ? decrypt(user.gender) : '';
             return user;
         })
         console.log(result);
