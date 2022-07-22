@@ -2,8 +2,8 @@ import { Sequelize, DataTypes } from 'sequelize';
 import db from './index.mjs';
 import { encrypt, decrypt } from '../util.js';
 export const ShiftData = db.sequelize.define('shiftdata', {
-    startTime: DataTypes.DATE,
-    endTime: DataTypes.DATE,
+    startTime: DataTypes.STRING,
+    endTime: DataTypes.STRING,
     survey_Id: DataTypes.INTEGER,
   }, 
   {
