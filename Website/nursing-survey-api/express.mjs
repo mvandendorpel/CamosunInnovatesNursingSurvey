@@ -158,9 +158,9 @@ app.get('/fb', async (req, res) => {
             console.log(userResult[0]);
             if (userResult[0]?.dateOfBirth == null) {
                 client.get("/profile.json", result.access_token).then(async results => {
-                    const userDOB = results[0].user?.dateOfBirth; 
-                    const userCity = results[0].user?.country;
-                    const userGender = results[0].user?.gender;
+                    const userDOB = encrypt(results[0].user?.dateOfBirth); 
+                    const userCity = encrypt(results[0].user?.country);
+                    const userGender = encrypt(results[0].user?.gender);
                     const updateProfileQuery = `UPDATE user_info SET dateOfBirth = '${userDOB}', city = '${userCity}', gender = '${userGender}' WHERE userID = ${queryResult[0].nurses_ID}`;
                     const [updateResults, moreMetadata] = await db.sequelize.query(updateProfileQuery);
                 }).catch(err => {

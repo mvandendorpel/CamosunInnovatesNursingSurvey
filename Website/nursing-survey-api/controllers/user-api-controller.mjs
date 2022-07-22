@@ -133,11 +133,14 @@ const getUserData = async (req, res) => {
         var  query = `SELECT user.ID, user.username, user_info.firstName, user_info.lastName, user_info.dateOfBirth, user_info.city, user_info.gender FROM user INNER JOIN user_info ON user.id = user_info.userID where user.id = ${req.query.nurses_id};`; //TODO: Bettery query to get profile data
         console.log(query);
         let [result, metadata] = await db.sequelize.query(query);
-        // result = result.map(user => {
-        //     user.firstName = decrypt(user.firstName);
-        //     user.lastName = decrypt(user.lastName);
-        //     return user;
-        // })
+        result = result.map(user => {
+            user.firstName = decrypt(user.firstName);
+            user.lastName = decrypt(user.lastName);
+            user.dateOfBirth = decrypt(user.dateOfBirth);
+            user.city = decrypt(user.city);
+            user.gender = decrypt(user.gender);
+            return user;
+        })
         console.log(result);
         res.status(200).send(result);
     }

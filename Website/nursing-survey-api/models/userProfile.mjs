@@ -15,6 +15,7 @@ export const UserProfile = db.sequelize.define('user_info', {
             {
                 user.firstName = encrypt(user.firstName);
                 user.lastName = encrypt(user.lastName);
+               
             }
         },
         afterFind : (objArray) => {
@@ -34,12 +35,18 @@ export const UserProfile = db.sequelize.define('user_info', {
                   
                         objArray[i].dataValues.firstName =  decrypt(objArray[i].dataValues.firstName);
                         objArray[i].dataValues.lastName =  decrypt(objArray[i].dataValues.lastName);
+                        objArray[i].dataValues.dateOfBirth =  decrypt(objArray[i].dataValues.dateOfBirth);
+                        objArray[i].dataValues.city =  decrypt(objArray[i].dataValues.city);
+                        objArray[i].dataValues.gender =  decrypt(objArray[i].dataValues.gender);
                     }
                 } else {
               
                 
                     objArray.dataValues.firstName = encrypt(objArray.dataValues.firstName);
                     objArray.dataValues.lastName = encrypt(objArray.dataValues.lastName);
+                    objArray.dataValues.dateOfBirth =  decrypt(objArray.dataValues.dateOfBirth);
+                    objArray.dataValues.city =  decrypt(objArray.dataValues.city);
+                    objArray.dataValues.gender =  decrypt(objArray.dataValues.gender);
                 }
                 
                 
