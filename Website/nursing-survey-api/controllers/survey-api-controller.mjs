@@ -109,7 +109,7 @@ const getAllSurveys = async(req, res) => {
 
 const getLastSurvey = async(req, res) => {
     try {
-        const query = `SELECT * from survey INNER JOIN fitbitdata ON survey.nurses_ID = fitbitdata.nurses_ID ORDER BY id DESC LIMIT 1;`;
+        const query = `SELECT * from survey INNER JOIN fitbitdata ON survey.nurses_ID = fitbitdata.nurses_ID WHERE survey.nurses_ID = ${req.query.nurses_ID} ORDER BY survey.id DESC LIMIT 1;`;
         const [results, metadata] = await db.sequelize.query(query);
         res.status(200).send(results[0]);
     }
@@ -120,5 +120,5 @@ const getLastSurvey = async(req, res) => {
 }
 
 
-export { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys };
+export { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey };
 

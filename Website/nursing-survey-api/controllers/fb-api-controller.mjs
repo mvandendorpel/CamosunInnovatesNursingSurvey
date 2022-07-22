@@ -22,6 +22,34 @@ const client = new FitbitApiClient({
     apiVersion: "1.2"
 })
 
+const getStepData = async (req, res) => {
+    try {
+        const stepQuery = `SELECT step_activity_all from fitbitdata WHERE nurses_ID = ${req.query.nurses_id} ORDER BY date DESC`;
+        const [results, metadata] = await db.sequelize.query(stepQuery);
+        let stepCount = 0;
+        const stepTotalMap = await results.map((element) => {
+            console.log(element.step_activity_all['activities-steps'][0].value);
+            stepCount += parseInt(element.step_activity_all['activities-steps'][0].value);
+        })
+        //console.log(stepCount);
+        let stepAvg = Math.round(((stepCount / results.length) + Number.EPSILON) * 100) / 100
+
+        //console.log(stepAvg);
+        const todaySteps = results[0]?.step_activity_all['activities-steps'][0].value;
+        //console.log(todaySteps);
+        const response = {
+            "totalSteps": stepCount,
+            "avgSteps": stepAvg,
+            "todaySteps": todaySteps
+        };
+        res.status(200).send(response);
+    }
+    catch(err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
+}
+
 
 /**
  * Function takes in data in JSON format, and then attempts to parse out the data that is recorded 
@@ -48,7 +76,7 @@ const getIntervalData = async (activityData) => {
     let endTimeCheck = endTimeHour * 60 + endTimeMinutes;
 
     // Gather Activity Data(Steps)
-    //console.log(JSON.stringify(activityData));
+    
     let workActivity = await activityData.filter(function (entry) {
         let entryTime = new Date("1970-01-01 " + entry.time);
         let entryHour = entryTime.getHours();
@@ -128,7 +156,7 @@ const getIntervalData = async (activityData) => {
 
 
 }
-export {getIntervalData};
+export {getIntervalData, getStepData};
                 
 // function checkTime() {
 //     var d = new Date(); // current time

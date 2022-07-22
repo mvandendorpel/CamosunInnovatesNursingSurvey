@@ -7,6 +7,9 @@ import mysql from 'mysql';
 import dotenv from 'dotenv';
 import FitbitApiClient from "fitbit-node";
 import db from '../models/index.mjs';
+import { User } from '../models/user.model.mjs';
+import { UserProfile } from '../models/userProfile.mjs';
+import { Op } from 'sequelize';
 
 dotenv.config();
 const client = new FitbitApiClient({
@@ -39,9 +42,21 @@ jwtOptions.secretOrKey = process.env.JWT_SECRET;
 
 
 const alreadyExists = async (email, username) => {
-    let userExists = false;
-    await connection.query("SELECT * FROM user WHERE username = ? OR email = ?", [email, username], function () {userExists = true });
-    return userExists;
+    // let userExists = false;
+    return await User.findOne({
+        where: {
+            [Op.or]: [
+                {
+                    username: username,
+                }, {
+                    email: email
+                }
+            ]
+            
+        }
+    })
+    // await connection.query("SELECT * FROM user WHERE username = ? OR email = ?", [email, username], function () {userExists = true });
+    // return userExists;
 };
 
 const verifyPassword = async function(plainTextPassword, dbHashedPassword) {
@@ -59,14 +74,25 @@ const registerNewUser = async (req, res) => {
             const hash = await argon2.hash(req.body.password, {
                 type: argon2.argon2id
             });
-            var query = "INSERT INTO user (email, password, username) VALUES (?, ?, ?);"
+            // var query = "INSERT INTO user (email, password, username) VALUES (?, ?, ?);"
+            const user = await User.create({
+                email: req.body.email,
+                password: hash,
+                username: req.body.username
+            })
+
+            await UserProfile.create({
+                firstName:  req.body.firstName,
+                lastName: req.body.lastName,
+                userID: user.dataValues.id
+            })
         
-            connection.query(query, [req.body.email, hash, req.body.username],(err, result, fields) => {
-                console.log('INSERT ', result)
-                const userId = result.insertId;
-                const insertUserInfo = "INSERT INTO user_info (firstName, lastName, userID) VALUES(?,?,?);"
-                connection.query(insertUserInfo, [req.body.firstName, req.body.lastName, userId]);
-            });
+            // connection.query(query, [req.body.email, hash, req.body.username],(err, result, fields) => {
+            //     console.log('INSERT ', result)
+            //     const userId = result.insertId;
+            //     const insertUserInfo = "INSERT INTO user_info (firstName, lastName, userID) VALUES(?,?,?);"
+            //     connection.query(insertUserInfo, [req.body.firstName, req.body.lastName, userId]);
+            // });
             //res.redirect(client.getAuthorizeUrl(scope, 'https://10.51.253.2:3004/fb'))
             res.status(201).send("User Created");
         }
@@ -106,7 +132,12 @@ const getUserData = async (req, res) => {
         //var token = jwt.decode(req.token);
         var  query = `SELECT user.ID, user.username, user_info.firstName, user_info.lastName, user_info.dateOfBirth, user_info.city, user_info.gender FROM user INNER JOIN user_info ON user.id = user_info.userID where user.id = ${req.query.nurses_id};`; //TODO: Bettery query to get profile data
         console.log(query);
-        const [result, metadata] = await db.sequelize.query(query);
+        let [result, metadata] = await db.sequelize.query(query);
+        // result = result.map(user => {
+        //     user.firstName = decrypt(user.firstName);
+        //     user.lastName = decrypt(user.lastName);
+        //     return user;
+        // })
         console.log(result);
         res.status(200).send(result);
     }
@@ -119,7 +150,7 @@ const getUserData = async (req, res) => {
 
 const getUserStats = async(req, res) => {
     try {
-        const query = `SELECT hr_activity_all, sleep from fitbitdata WHERE nurses_ID = ${req.query.nurses_ID}`;
+        const query = `SELECT hr_activity_all, sleep from fitbitdata WHERE nurses_ID = ${req.query.nurses_id}`;
         const [results, metadata] = await db.sequelize.query(query);
         //console.log(results[0]['hr_activity_all']['activities-heart']);
         const sleepInfo = await results.map((element) => {

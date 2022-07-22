@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import passport from 'passport';
-import { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys } from '../controllers/survey-api-controller.mjs';
+import { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey } from '../controllers/survey-api-controller.mjs';
 import {registerNewUser, logInUser, getUserData, getUserStats} from '../controllers/user-api-controller.mjs';
+import { getStepData } from '../controllers/fb-api-controller.mjs';
 //import {integrateFBData} from '../controllers/fb-api-controller.mjs'
 import cors from 'cors';
 
@@ -17,19 +18,17 @@ router.use(cors({ origin: true }));
 router.route('/users')
 .post(registerNewUser)
 .get(getUserData);
-// router.route('/fb')
-// .post(integrateFBData)
 
-/* router.route('/survey_questions')
-.get(getSurveyQuestions)
-.post(saveSurveyAnswers); */
-//Not Yet Implemented
-//.patch(updateUserInfo);
+
+
 
 router.route('/login')
 .post(passport.authenticate('local', {session: false}), logInUser);
 //Not Yet Implemented
 //.patch(updateUserPassword);
+
+router.route('/stepcount')
+.get(getStepData);
 
 router.route('/allsurveys')
 .get(getAllSurveys);
@@ -37,8 +36,8 @@ router.route('/allsurveys')
 router.route('/userstats')
 .get(getUserStats);
 
-router.route('/lastsubmission/:userid')
-//.get(getLastSurvey);
+router.route('/lastsubmission')
+.get(getLastSurvey);
 
 router.route('/dashboard/:userid')
 //.get(getDashboardInfo);

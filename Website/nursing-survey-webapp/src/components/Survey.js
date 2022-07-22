@@ -16,12 +16,17 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
+import jwtDecode, { JwtPayload } from "jwt-decode";
+
 
 //import './SignUp.css'
 const Survey = (props) => {
+    const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage
+    const decoded = jwtDecode(authToken); 
+    const userID = decoded.userID 
     const { surveyType } = useParams();
     const form = {
-        nurseId: 2,
+        nurseId: userID,
         surveyDate: new Date(),
         surveyTypeId: surveyType ? parseInt(surveyType) : 1,
         answers: new Map(),

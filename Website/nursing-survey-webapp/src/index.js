@@ -12,6 +12,7 @@ import RichSample from './components/RichSample.js';
 import Profile from './components/Profile.js';
 import UserStats from './components/UserStats.js';
 import DashboardHome from './components/DashboardHome';
+import Steps from './components/Steps.js';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
@@ -28,6 +29,7 @@ root.render(
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/stats" element={<UserStats />} />
+          <Route path="/profile/steps" element={<Steps />} />
         </Routes>
       <App />
       
