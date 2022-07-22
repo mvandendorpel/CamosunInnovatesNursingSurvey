@@ -10,6 +10,7 @@ import db from '../models/index.mjs';
 import { User } from '../models/user.model.mjs';
 import { UserProfile } from '../models/userProfile.mjs';
 import { Op } from 'sequelize';
+import { decrypt } from '../util.js';
 
 dotenv.config();
 const client = new FitbitApiClient({
