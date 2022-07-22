@@ -2,6 +2,7 @@ import db from '../models/index.mjs';
 import { Survey } from '../models/survey.model.mjs';
 import {SurveyQuestion} from '../models/survey-question.model.mjs';
 import { SurveyAnswer } from '../models/surveyanswer.model.mjs';
+import { ShiftData } from '../models/shiftdata.mjs';
 // get all the questions and offered answers from the database
 const getWeeklyQuestions = async (req, res) => {
     const surveyType = req.params.surveyType || 1;
@@ -56,6 +57,15 @@ const postWeeklySurvey = async (req, res) => {
                 answer: surveyData.answers[i].answer,
                 survey_question_id: surveyQuestionId.dataValues.id
             });
+            // shift data
+            if (surveyData.answers[i].qId == 2) {
+                const [startTime, endTime] = surveyData.answers[i].answer.split(' - ');
+                await ShiftData.create({
+                    startTime: startTime,
+                    endTime: endTime,
+                    survey_Id: surveyId
+                })
+            }
         }
         const query  = `SELECT q.*, sa.answer FROM mydb.survey s INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id
         INNER JOIN question q ON q.id = sq.Question_Id
