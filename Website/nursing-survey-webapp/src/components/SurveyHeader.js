@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import Box from '@mui/material/Box';
 import axios from 'axios';
 import jwtDecode, { JwtPayload } from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
+
 
 import './SurveyHeader.css'
 
@@ -36,6 +38,7 @@ function stringToColor(string) {
 }
 
 function stringAvatar(name) {
+  
     return {
       sx: {
         bgcolor: stringToColor(name),
@@ -44,12 +47,8 @@ function stringAvatar(name) {
     };
 }
 
-function handleLogout(){
-  //TODO: Stub function
-  console.log("logout");
-}
-
 const SurveyHeader = (props) => {
+  const navigate = useNavigate();
   const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage
   const decoded = jwtDecode(authToken); 
   const userID = decoded.userID  
@@ -59,6 +58,7 @@ const SurveyHeader = (props) => {
     try {
         const userData = await axios.get(`${apiURL}?nurses_id=${userID}`);
         setData(userData.data[0]);
+        
     } catch (e) {
         console.log(e);
     }
@@ -66,6 +66,7 @@ const SurveyHeader = (props) => {
 
   useEffect(() => {
     getUserInfo();
+    console.log(`${data.firstName} ${data.lastName}`);
   }, []); 
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -76,6 +77,12 @@ const SurveyHeader = (props) => {
   const handleClose = () => {
       setAnchorEl(null);
   };
+
+  const logout = () => {
+    localStorage.clear();
+    navigate('/login');
+  }
+  
   return (
     <React.Fragment>
       <Typography className="survey-header" variant="h4" component="div" gutterBottom sx={{ml: 4.5, mt: 8, color: "white"}}>
@@ -128,11 +135,11 @@ const SurveyHeader = (props) => {
           Profile 
           
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={() => alert("Not Currently Functional")}>
           My account
         </MenuItem>
     
-        <MenuItem>
+        <MenuItem onClick={() => logout()}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

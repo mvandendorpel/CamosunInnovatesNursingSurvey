@@ -19,8 +19,7 @@ root.render(
   
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={<RichSample/>} />
-          <Route path="/Dashboard" element={<DashboardHome/>} />
+          <Route path="/" element={<DashboardHome/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/survey/:surveyType" element={<Survey />} />
             

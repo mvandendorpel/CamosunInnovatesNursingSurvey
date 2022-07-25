@@ -17,17 +17,20 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 import jwtDecode, { JwtPayload } from "jwt-decode";
+import { useLocation } from 'react-router-dom';
 
-
-//import './SignUp.css'
 const Survey = (props) => {
+    const location = useLocation();
+
+    const date = location.state?.date;
+
     const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage
     const decoded = jwtDecode(authToken); 
     const userID = decoded.userID 
     const { surveyType } = useParams();
     const form = {
         nurseId: userID,
-        surveyDate: new Date(),
+        surveyDate: date ? new Date(date) : new Date(),
         surveyTypeId: surveyType ? parseInt(surveyType) : 1,
         answers: new Map(),
         dateStarted: new Date(),
@@ -37,7 +40,6 @@ const Survey = (props) => {
     const [questions, setQuestions] = useState([]);
     const [formValues, setFormValues] = useState(form);
     const [filled, isFilled] = useState(false); //Used for next button disabling
-    const params = useParams();
     const [surveyTitle, setSurveyTitle] = useState('Daily Survey');
 
     const [answers, setAnswers] = useState([]); // state to track questions ans answers
@@ -67,17 +69,12 @@ const Survey = (props) => {
         surveyData.answers = [...surveyData.answers.values()];
         surveyData.dateCompleted = new Date();
         const res = await axios.post(apiURL, surveyData);
-        console.log('res', res);
         if (surveyData.surveyTypeId == 1) {
             window.location.href =`https://10.51.253.2:3004/authorize?surveyId=${res.data}`;
         } 
         else {
-            setAnswers(surveyData.data);
+            setAnswers(surveyData.answers);
         }
-        
-
-        
-        
         setFormSubmitted(true); // updates the state to show that the form is submitted
     }
 
