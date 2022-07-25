@@ -8,11 +8,13 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
+import HomeIcon from '@mui/icons-material/Home';
 import { Link } from "react-router-dom";
 import Box from '@mui/material/Box';
 import axios from 'axios';
 import jwtDecode, { JwtPayload } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
+
 
 
 import './SurveyHeader.css'
@@ -85,7 +87,11 @@ const SurveyHeader = (props) => {
   
   return (
     <React.Fragment>
-      <Typography className="survey-header" variant="h4" component="div" gutterBottom sx={{ml: 4.5, mt: 8, color: "white"}}>
+      
+      <Typography className="survey-header" variant="h4" component="div" gutterBottom sx={{ml: 4.5, mt: 6, color: "white"}}>
+      <IconButton sx={{width: "unset", color:"white", padding:"0 20px 5px 0"}} component={Link} to="/">
+            <HomeIcon sx={{width:"1.5em", height:"1.5em"}}/>
+          </IconButton>
         {props.title}         
         <Tooltip title="Account settings"> 
           <IconButton
@@ -94,6 +100,7 @@ const SurveyHeader = (props) => {
             aria-expanded={open ? 'true' : undefined} onClick={handleClick} className="profile-pic" aria-label="profile">
             <Avatar {...stringAvatar(`${data.firstName} ${data.lastName}`)} />
           </IconButton>
+          
         </Tooltip>
       </Typography>
       <Menu
@@ -148,7 +155,7 @@ const SurveyHeader = (props) => {
         
       </Menu>
       <img src={HeaderImage} alt="header"/>
-  
+      
     </React.Fragment>
   );
 }
