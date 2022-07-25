@@ -20,18 +20,15 @@ const DashboardHome = () => {
   const [daily, setDaily] = useState([]); // daily survey data from response
   const [weekly, setWeekly] = useState([]); // weekly survey data from response
   const apiURL = "https://10.51.253.2:3004/api/dashboard";
-  console.log(userID);
+  const desiredLength = 7;
   const getUserInfo = async () => {
     try {
         const userData = await axios.get(`${apiURL}?nurses_id=${userID}`);
         setData(userData.data);
         setDaily(userData.data.dailySurveyList);
         setWeekly(userData.data.weeklySurveyList);
-        console.log(userData.data)
-        console.log(userID);
     } catch (e) {
         console.log(e);
-        console.log("hello");
     }
   }
 
@@ -43,19 +40,34 @@ const DashboardHome = () => {
 
   const dailyArray = (daily);
   const weeklyArray = (weekly);
-  console.log(weeklyArray);
   function getIncompleteSurveys(fullArray){ // filters all incomplete arrays from an array of surveys
     let incompleteArray = fullArray.map((item) => {
       if (item.surveyComplete == false){ //appends to new array if the user hasn't completed a survey
         return item.surveyDate;
       }
     });
+    
     incompleteArray = incompleteArray.filter(e => e); // removes all null values from the array
+    //incompleteArray = trimSurveyArray(incompleteArray);
+    //incompleteArray.reverse();
     return incompleteArray;
   }
 
-  const incompleteDaily = getIncompleteSurveys(dailyArray);
-  const incompleteWeekly = getIncompleteSurveys(weeklyArray);
+  function trimSurveyArray(surveyArray){ // trims the survey array to an arbitrary length
+    surveyArray.length = Math.min(surveyArray.length, desiredLength);
+    return surveyArray;
+  }
+
+  let incompleteDaily = getIncompleteSurveys(dailyArray);
+  let incompleteWeekly = getIncompleteSurveys(weeklyArray);
+
+  const dailyRemaining = incompleteDaily.length - desiredLength;
+  const weeklyRemaining = incompleteWeekly.length - desiredLength;
+
+  incompleteDaily = trimSurveyArray(incompleteDaily);
+  incompleteWeekly = trimSurveyArray(incompleteWeekly);
+
+  console.log(trimSurveyArray(incompleteDaily));
 
   return (
     <>
@@ -89,6 +101,9 @@ const DashboardHome = () => {
           
           <ul>
             <ListSubheader>{"Weekly Surveys"}</ListSubheader>
+            <Typography variant="caption" gutterBottom ml={2}>
+                  {weeklyRemaining} additional surveys
+                </Typography>
             {incompleteWeekly.map((item) => (
               
                   <ListItem key={`item-${item}`}>
@@ -96,14 +111,20 @@ const DashboardHome = () => {
                     <Button size="small" sx={{color:"black", size:"5px"}} component={Link} to="/survey/2" state={{date: `${item}`}}><ListItemText primary={`Week of ${item}`} /></Button>
                   </ListItem>
                 ))}
+                
           </ul>
           <ul>
             <ListSubheader>{"Daily Surveys"}</ListSubheader>
+            <Typography variant="caption" gutterBottom ml={2}>
+ 
+                {dailyRemaining} additional surveys
+                </Typography>
             {incompleteDaily.map((item) => (
                   <ListItem key={`item-${item}`}>
                     <Button size="small" sx={{color:"black"}} component={Link} to="/survey/1" state={{date: `${item}`}}><ListItemText primary={`${item}`} /></Button>
                   </ListItem>
                 ))}
+             
           </ul>
           
         </List>
