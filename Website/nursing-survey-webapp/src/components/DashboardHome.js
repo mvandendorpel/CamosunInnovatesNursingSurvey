@@ -93,7 +93,7 @@ const DashboardHome = () => {
                 <CloseIcon fontSize="inherit" />
               </IconButton>
             }
-            sx={{ mb: 2 }}
+            sx={{ mb: 1.5, mt: 2 }}
           >
             Please sync in the Fitbit app before completing any surveys today.
           </Alert>
@@ -128,29 +128,28 @@ const DashboardHome = () => {
           
           <ul>
             <ListSubheader>{"Weekly Surveys"}</ListSubheader>
-            <Typography variant="caption" gutterBottom ml={2}>
-                  {weeklyRemaining} additional surveys
-                </Typography>
+            
             {incompleteWeekly.map((item) => (
-              
-                  <ListItem key={`item-${item}`}>
-                    
-                    <Button size="small" sx={{color:"black", size:"5px"}} component={Link} to="/survey/2" state={{date: `${item}`}}><ListItemText primary={`Week of ${item}`} /></Button>
-                  </ListItem>
-                ))}
+              <ListItem key={`item-${item}`}>
+                <Button size="small" sx={{color:"black", size:"5px"}} component={Link} to="/survey/2" state={{date: `${item}`}}><ListItemText primary={`Week of ${item}`} /></Button>
+              </ListItem>
+            ))}
+            <Typography variant="caption" gutterBottom ml={2}>
+              {weeklyRemaining} additional surveys
+            </Typography>
                 
           </ul>
           <ul>
             <ListSubheader>{"Daily Surveys"}</ListSubheader>
-            <Typography variant="caption" gutterBottom ml={2}>
- 
-                {dailyRemaining} additional surveys
-                </Typography>
+            
             {incompleteDaily.map((item) => (
-                  <ListItem key={`item-${item}`}>
-                    <Button size="small" sx={{color:"black"}} component={Link} to="/survey/1" state={{date: `${item}`}}><ListItemText primary={`${item}`} /></Button>
-                  </ListItem>
-                ))}
+              <ListItem key={`item-${item}`}>
+                <Button size="small" sx={{color:"black"}} component={Link} to="/survey/1" state={{date: `${item}`}}><ListItemText primary={`${item}`} /></Button>
+              </ListItem>
+            ))}
+            <Typography variant="caption" gutterBottom ml={2}>
+              {dailyRemaining} additional surveys
+            </Typography>
              
           </ul>
           
