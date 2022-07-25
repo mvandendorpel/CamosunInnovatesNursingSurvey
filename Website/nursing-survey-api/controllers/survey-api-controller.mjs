@@ -3,6 +3,8 @@ import { Survey } from '../models/survey.model.mjs';
 import {SurveyQuestion} from '../models/survey-question.model.mjs';
 import { SurveyAnswer } from '../models/surveyanswer.model.mjs';
 import { ShiftData } from '../models/shiftdata.mjs';
+import { Sequelize } from 'sequelize';
+
 // get all the questions and offered answers from the database
 const getWeeklyQuestions = async (req, res) => {
     const surveyType = req.params.surveyType || 1;
@@ -44,7 +46,6 @@ const postWeeklySurvey = async (req, res) => {
             dateStarted: surveyData.dateStarted,
             dateCompleted: surveyData.dateCompleted
         });
-        console.log('survey', survey);
         const surveyId = survey.dataValues.id;
         for (let i = 0; i < surveyData.answers.length; i++) {
             // creates the survey question and save to db
@@ -129,6 +130,73 @@ const getLastSurvey = async(req, res) => {
     }
 }
 
+const getDashboardInfo = async(req, res) => {
+    try {
+        let surveyDateCheck = new Date();
+        const studyStart = new Date(2022, 4, 15);
+        const dailySurveyPeriod = [];
+        for (surveyDateCheck; surveyDateCheck >= studyStart; surveyDateCheck.setDate(surveyDateCheck.getDate() - 1)) {
+            dailySurveyPeriod.push(`${surveyDateCheck.getFullYear()}-${('0' + (surveyDateCheck.getMonth()+1)).slice(-2)}-${('0' + surveyDateCheck.getDate()).slice(-2)}`);
+        }
+        //('0' + MyDate.getDate()).slice(-2) + '/'
+        //+ ('0' + (MyDate.getMonth()+1)).slice(-2) + '/'
+        const dailSurveyData = await Survey.findAll({
+            where: {
+                surveyDate: {
+                    [Sequelize.Op.in]: dailySurveyPeriod
+                },
+                nurses_ID: req.query.nurses_id,
+                survey_type_id: 1
+            }
+        })
 
-export { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey };
+        const dailySurveyDates = dailSurveyData.map(sd => sd.surveyDate);
+        const dailySurveyList = dailySurveyPeriod.map(element => {
+            return {
+                surveyDate: element,
+                surveyComplete: dailySurveyDates.includes(element)
+            }
+        })
+        let weeklyDates = [];
+        surveyDateCheck = studyStart;
+        let now = new Date();
+        for (surveyDateCheck; surveyDateCheck <= now; surveyDateCheck.setDate(surveyDateCheck.getDate() + 7)) {
+            weeklyDates.push(`${surveyDateCheck.getFullYear()}-${('0' + (surveyDateCheck.getMonth()+1)).slice(-2)}-${('0' + surveyDateCheck.getDate()).slice(-2)}`);
+        }
+        const weeklySurveyData = await Survey.findAll({
+            where: {
+                surveyDate: {
+                    [Sequelize.Op.in]: weeklyDates
+                },
+                nurses_ID: req.query.nurses_id,
+                survey_type_id: 2
+            }
+        })
+        const weeklySurveyDates = weeklySurveyData.map(sd => sd.surveyDate);
+        const weeklySurveyList = weeklyDates.map(element => {
+            return {
+                surveyDate: element,
+                surveyComplete: weeklySurveyDates.includes(element)
+            }
+        })
+        
+        const responseData = {
+            dailySurveyList,
+            weeklySurveyList
+        };
+        //console.log(responseData);
+        res.status(200).send(responseData);
+
+    }
+    catch(err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+
+}
+
+
+
+
+export { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey, getDashboardInfo};
 

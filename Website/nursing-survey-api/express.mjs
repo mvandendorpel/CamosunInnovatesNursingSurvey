@@ -100,11 +100,6 @@ const u = await User.findOne({
 // })
 console.log('user data', u)
 
-const answerTwo = await SurveyAnswer.findAll({
-
-})
-// console.log("TESTING ANSWER 2.", answerTwo);
-
 app.get('/', (req, res) => {
     res.send("Node.js server is live");
 })

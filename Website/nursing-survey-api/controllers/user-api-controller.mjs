@@ -134,14 +134,14 @@ const getUserData = async (req, res) => {
         var  query = `SELECT user.ID, user.username, user_info.firstName, user_info.lastName, user_info.dateOfBirth, user_info.city, user_info.gender FROM user INNER JOIN user_info ON user.id = user_info.userID where user.id = ${req.query.nurses_id};`; //TODO: Bettery query to get profile data
         console.log(query);
         let [result, metadata] = await db.sequelize.query(query);
-        result = result.map(user => {
-            user.firstName = decrypt(user.firstName);
-            user.lastName = decrypt(user.lastName);
-            user.dateOfBirth = user.dateOfBirth ? decrypt(user.dateOfBirth) : '';
-            user.city = user.city ? decrypt(user.city) : '';
-            user.gender = user.gender ? decrypt(user.gender) : '';
-            return user;
-        })
+        // result = result.map(user => {
+        //     user.firstName = decrypt(user.firstName);
+        //     user.lastName = decrypt(user.lastName);
+        //     user.dateOfBirth = user.dateOfBirth ? decrypt(user.dateOfBirth) : '';
+        //     user.city = user.city ? decrypt(user.city) : 'fail';
+        //     user.gender = user.gender ? decrypt(user.gender) : '';
+        //     return user;
+        // })
         console.log(result);
         res.status(200).send(result);
     }
@@ -159,8 +159,9 @@ const getUserStats = async(req, res) => {
         //console.log(results[0]['hr_activity_all']['activities-heart']);
         const sleepInfo = await results.map((element) => {
             //console.log("Sleep Stage: " + element?.sleep?.summary?.stages);
-            
-            return element?.sleep?.summary?.stages;
+            if (element?.sleep?.summary?.stages !== null) {
+                return element?.sleep?.summary?.stages;
+            }
         });
         console.log("Sleep Info: " + sleepInfo);
         const heartRateInfo = await results.map((element) => {

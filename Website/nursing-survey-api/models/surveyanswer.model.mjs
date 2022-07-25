@@ -13,7 +13,6 @@ export const SurveyAnswer = db.sequelize.define('surveyanswer', {
             {
                 
                 const encrypted = encrypt(obj.answer);
-                console.log("TESTING TESTING",encrypted);
                 obj.answer = encrypted;
             }
         },
@@ -31,15 +30,11 @@ export const SurveyAnswer = db.sequelize.define('surveyanswer', {
                 // If you could do that, then the encrypt/decrypt, beforeCreate, afterFind implementations could be shared.
                 if(objArray.constructor === Array) {
                     for (let i = 0; i < objArray.length; i++) {
-                        console.log("TESTING TESTING obj", objArray[i].dataValues.answer);
-    
                         const decrypted = decrypt(objArray[i].dataValues.answer);
-                        console.log("TESTING Decrypted", decrypted);
                         objArray[i].dataValues.answer = decrypted;
                     }
                 } else {
                     const decrypted = decrypt(objArray.dataValues.answer);
-                    console.log("TESTING Decrypted single",decrypted);
                     objArray.answer = decrypted;
                 }
                 
