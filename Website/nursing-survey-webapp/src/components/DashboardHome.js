@@ -9,6 +9,10 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { Link } from "react-router-dom";
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import Collapse from '@mui/material/Collapse';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
 import jwtDecode, { JwtPayload } from "jwt-decode";
 import './DashboardHome.css'
@@ -19,6 +23,7 @@ const DashboardHome = () => {
   const [data, setData] = useState([]); // response data
   const [daily, setDaily] = useState([]); // daily survey data from response
   const [weekly, setWeekly] = useState([]); // weekly survey data from response
+  const [open, setOpen] = React.useState(true);
   const apiURL = "https://10.51.253.2:3004/api/dashboard";
   const desiredLength = 7;
   const getUserInfo = async () => {
@@ -72,6 +77,28 @@ const DashboardHome = () => {
   return (
     <>
       <SurveyHeader title={'Welcome!'} />
+      <Stack sx={{ alignItems: "center", justifyContent: "center" }} spacing={2}>
+        <Collapse in={open}>
+          <Alert
+            severity="warning"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            Please sync in the Fitbit app before completing any surveys today.
+          </Alert>
+        </Collapse>      
+      </Stack>
       <Box sx={{  alignItems: "center", justifyContent: "center", display: "flex", flexDirection: "column"}}>
 
         <Stack className={'ButtonBox'} spacing={3} direction="row" sx={{justifyContent: "center", m:4}}>
