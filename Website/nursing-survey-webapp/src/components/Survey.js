@@ -25,12 +25,12 @@ const Survey = (props) => {
     const date = location.state?.date;
 
     const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage
-    const decoded = jwtDecode(authToken); 
-    const userID = decoded.userID 
+    const decoded = jwtDecode(authToken); // decodes token
+    const userID = decoded.userID; // gets userID from token
     const { surveyType } = useParams();
     const form = {
         nurseId: userID,
-        surveyDate: date ? new Date(date) : new Date(),
+        surveyDate: date ? new Date(date) : new Date(), // If no date passed in from dashboard, then date is today's date
         surveyTypeId: surveyType ? parseInt(surveyType) : 1,
         answers: new Map(),
         dateStarted: new Date(),

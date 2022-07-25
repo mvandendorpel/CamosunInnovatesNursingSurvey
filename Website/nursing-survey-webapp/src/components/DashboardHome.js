@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SurveyHeader from './SurveyHeader';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -14,11 +14,11 @@ import jwtDecode, { JwtPayload } from "jwt-decode";
 import './DashboardHome.css'
 const DashboardHome = () => {
   const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage
-  const decoded = jwtDecode(authToken); 
-  const userID = decoded.userID  
-  const [data, setData] = useState([]);
-  const [daily, setDaily] = useState([]);
-  const [weekly, setWeekly] = useState([]);
+  const decoded = jwtDecode(authToken); // decodes token
+  const userID = decoded.userID;  // gets userID from token
+  const [data, setData] = useState([]); // response data
+  const [daily, setDaily] = useState([]); // daily survey data from response
+  const [weekly, setWeekly] = useState([]); // weekly survey data from response
   const apiURL = "https://10.51.253.2:3004/api/dashboard";
   console.log(userID);
   const getUserInfo = async () => {
@@ -44,13 +44,13 @@ const DashboardHome = () => {
   const dailyArray = (daily);
   const weeklyArray = (weekly);
   console.log(weeklyArray);
-  function getIncompleteSurveys(fullArray){
+  function getIncompleteSurveys(fullArray){ // filters all incomplete arrays from an array of surveys
     let incompleteArray = fullArray.map((item) => {
       if (item.surveyComplete == false){ //appends to new array if the user hasn't completed a survey
         return item.surveyDate;
       }
     });
-    incompleteArray = incompleteArray.filter(e => e);
+    incompleteArray = incompleteArray.filter(e => e); // removes all null values from the array
     return incompleteArray;
   }
 

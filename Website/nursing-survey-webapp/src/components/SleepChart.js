@@ -35,22 +35,8 @@ const labelFormatter = (value) => {
     return value + '%';
 };
 
-const SleepChart = () => {
-    /* const [data, setData] = useState([]);
-    const apiURL = "https://10.51.253.2:3004/api/fb/sleep";
-  const getSleepData = async () => {
-    try {
-        const sleepData = await axios(apiURL);
-        console.log(sleepData.data);
-        setData(sleepData.date);
-    } catch (e) {
-        console.log(e);
-    }
-  }
-
-  useEffect(() => {
-    //getSleepData();
-    }, []);  */
+const SleepChart = (props) => {
+  const data = [];
   return(
     <div className="pie-row" >
       <ResponsiveContainer height={items.length * 80} width="100%">
