@@ -1,34 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import jwtDecode, { JwtPayload } from "jwt-decode";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
 
 
 
-const HeartChart = () => {
-
-    /* const decoded = jwtDecode('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjQ1LCJpYXQiOjE2NTcxNzY5MzUsImV4cCI6MTY1NzE4MDUzNX0.n9NHqEDERDcfabTreVGA6i2QW0UQawtRRrjw-Kb2Ejk'); //The secret is currently stored in the .env file in the API folder, not sure if you can access it from there directly or need a copy on your end
-  const userID = decoded.userID  
-  console.log(userID)
-  const [data, setData] = useState([]);
-  const apiURL = "https://10.51.253.2:3004/api/allsurveys";
-  const getHeartData = async () => {
-    try {
-        const heartData = await axios(`${apiURL}?nurses_id=${userID}`);
-        console.log(heartData.data);
-        setData(heartData.data);
-    } catch (e) {
-        console.log(e);
-    }
-  } */
-
-  /* useEffect(() => {
-    getHeartData();
-    }, []);  */
-
+const HeartChart = (props) => {
     const data = [];
 
-const rand = 90;
+/* const rand = 90;
 for (let i = 0; i < 7; i++) {
   let d = {
     day: ('03-2') + i,
@@ -36,8 +14,24 @@ for (let i = 0; i < 7; i++) {
   };
 
   data.push(d);
+} */
+function waitForElement(){
+  if(typeof props.data !== "undefined"){
+    (props.data).forEach(item => {
+      let i = {
+        day: item.dateTime,
+        value: item.restingHeartRate
+      };
+      data.push(i);
+    });
+  } else {
+    setTimeout(waitForElement, 250);
+  }
 }
 
+
+console.log(props.data);
+waitForElement();
     return (
         <>
             <ResponsiveContainer height={200} width={"95%"}>

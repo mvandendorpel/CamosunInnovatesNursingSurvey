@@ -20,9 +20,8 @@ const UserStats = (props) => {
     const getUserStats = async () => {
         try {
             const userData = await axios.get(`${apiURL}?nurses_id=${userID}`);
-            setData(userData.data[0]);
-            console.log(userID);
-            console.log(userData);
+            setData(userData.data);
+            console.log(userData.data);
         } catch (e) {
             console.log(e);
         }
@@ -30,9 +29,8 @@ const UserStats = (props) => {
 
     useEffect(() => {
         getUserStats();
-        console.log(data);
     }, []); 
-
+    console.log(data.heartRateResponse);
     return(
         <>
             <SurveyHeader title={ title} />
@@ -45,11 +43,11 @@ const UserStats = (props) => {
                 <Typography ml={2} variant="h6" gutterBottom component="div">
                     Base Heart Rate
                 </Typography>
-                <HeartChart />
+                <HeartChart data={data.heartRateResponse}/>
                 <Typography ml={2} variant="h6" gutterBottom component="div">
                     Fatigue Levels
                 </Typography>
-                <FatigueChart />
+                <FatigueChart data={data.fatigueResponse}/>
                 
             </Box>
             
