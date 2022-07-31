@@ -90,6 +90,13 @@ const u = await User.findOne({
     }
 })
 
+// const fbit = await Fitbit.findOne({
+//     where: {
+//         id: 63
+//     }
+// });
+// console.log('Fitbit >>>', fbit)
+
 // var  query = `SELECT user.ID, user.username, user_info.firstName, user_info.lastName, user_info.dateOfBirth, user_info.city, user_info.gender FROM user INNER JOIN user_info ON user.id = user_info.userID where user.id = 11;`; //TODO: Bettery query to get profile data
 // console.log(query);
 // let [result, metadata] = await db.sequelize.query(query);
@@ -181,8 +188,9 @@ app.get('/fb', async (req, res) => {
                 res.status(500).send(err);
                 console.log(err);
             })
-            await client.get(`/sleep/date/today.json`, result.access_token).then(async results => {
+            await client.get(`/sleep/date/${date}.json`, result.access_token).then(async results => {
                 sleepData = results[0];
+                console.log(sleepData);
                 //res.status(200).send(results[0]);
             }).catch(err => {
                 res.status(500).send(err);

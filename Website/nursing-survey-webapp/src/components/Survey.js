@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import axios from 'axios';
 import './Survey.css';
@@ -46,20 +47,40 @@ const Survey = (props) => {
     const [formSubmitted, setFormSubmitted] = useState(false); // state to track when the form is submitted
     const [startShiftValue, setStartShiftValue] = useState(form.startShift);
     const [endShiftValue, setEndShiftValue] = useState(form.endShift);
-    const apiURL = "https://10.51.253.2:3004/api/weeklysurvey";
+    const [surveyTaken, setSurveyTaken] = useState(false);
+    const [surveyTakenMessage, setSurveyTakenMessage] = useState('');
+    const apiURL = "https://10.51.253.2:3004/api/";
     
     useEffect(() => {
         getSurveyQuestions();
     }, []);
+
+    const isSurveyTaken = async () => {
+        const surveyData = {
+            surveyDate: date ? new Date(date) : new Date(),
+            surveyTypeId:  surveyType ? parseInt(surveyType) : 1,
+            nurseId: userID
+        }
+        return await axios.post(`${apiURL}/surveytaken`, surveyData);
+    }
 
 
     const getSurveyQuestions = async () => {
         try {
             console.log('surveyType', surveyType);
             setSurveyTitle(surveyType == 1 ? 'Daily Survey': 'Weekly Survey');
-            const surveys = await axios(`${apiURL}/${surveyType}`);
-            console.log(surveys.data);
-            setQuestions(surveys.data);
+            const survey = (await isSurveyTaken()).data;
+            setSurveyTaken(survey.alreadyTaken)
+            console.log('survey taken', survey);
+            if (survey.alreadyTaken) {
+                setSurveyTakenMessage(`Survey already taken for ${survey.surveyDate}!`);
+            } else {
+                setSurveyTakenMessage('');
+                const surveys = await axios(`${apiURL}/weeklysurvey/${surveyType}`);
+                console.log(surveys.data);
+                setQuestions(surveys.data);
+            }
+            
             
         } catch (e) { }
     };
@@ -68,7 +89,7 @@ const Survey = (props) => {
         const surveyData = { ...formValues };
         surveyData.answers = [...surveyData.answers.values()];
         surveyData.dateCompleted = new Date();
-        const res = await axios.post(apiURL, surveyData);
+        const res = await axios.post(apiURL+'weeklysurvey', surveyData);
         if (surveyData.surveyTypeId == 1) {
             window.location.href =`https://10.51.253.2:3004/authorize?surveyId=${res.data}`;
         } 
@@ -127,7 +148,7 @@ const Survey = (props) => {
             ))}
 
             {
-                questions.map((q, qIndex) => {
+                !surveyTaken && questions.map((q, qIndex) => {
                     return (
                         <div id={qIndex} className="question" key={qIndex}>
                             <Typography variant="h4" component="div" gutterBottom sx={{ ml: 3, mt: 3 }}> {/* Question text */}
@@ -138,7 +159,7 @@ const Survey = (props) => {
                                 <RadioGroup>
                                     {q.answers && q.answers.map((ans, index) => (
                                       
-                                            <FormControlLabel key={index} className="qRadio" label={ans.answerText} control={<Radio />} name={'q' + q.qId} sx={{ ml: 2, }} onClick={(e) => {
+                                            <FormControlLabel key={index}  label={ans.answerText} control={<Radio className="qRadio" />} name={'q' + q.qId} sx={{ ml: 2, }} onClick={(e) => {
                                                 handleSelectedAnswer(q, ans, qIndex);
                                             }} type="radio" value={ans.answerId} />
                                        
@@ -164,40 +185,42 @@ const Survey = (props) => {
                                     isFilled(true);
                                 }}>
                             </TextField>}
-                            {!q.answers && q.qId == 2 && <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <DateTimePicker label="Start Shift" value={startShiftValue} onChange={(value) => {
-                                    setStartShiftValue(value);
-                                    const form = { ...formValues };
-                                    form.startShift = value;
-                                    const filled = !!(form.startShift && form.endShift);
-                                    const start = moment(form.startShift).format('YYYY-MM-DD hh:mm:ss');
-                                    const end = moment(form.endShift).format('YYYY-MM-DD hh:mm:ss');
-                                    if (filled) {
-                                        form.answers.set(q.qId, {
-                                            qId: q.qId,
-                                            answer: `${start} - ${end}`
-                                        })
-                                    }
-                                    isFilled(filled);
-                                    setFormValues(form);
-                                }} renderInput={(params) => <TextField {...params}/>} />
-                                <DateTimePicker label="End Shift" value={endShiftValue} onChange={(value) => {
-                                    setEndShiftValue(value);
-                                    const form = { ...formValues };
-                                    form.endShift = value;
-                                    const filled = !!(form.startShift && form.endShift);
-                                    const start = moment(form.startShift).format('YYYY-MM-DD hh:mm:ss');
-                                    const end = moment(form.endShift).format('YYYY-MM-DD hh:mm:ss');
-                                    if (filled) {
-                                        form.answers.set(q.qId, {
-                                            qId: q.qId,
-                                            answer: `${start} - ${end}`
-                                        })
-                                    }
-                                    isFilled(filled);
-                                    setFormValues(form);
-                                }} renderInput={(params) => <TextField {...params}/>} />
-                                </LocalizationProvider>}
+                            <Box sx={{ mx: "auto", width: "96%" }} >
+                                {!q.answers && q.qId == 2 && <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DateTimePicker label="Start Shift" value={startShiftValue} onChange={(value) => {
+                                        setStartShiftValue(value);
+                                        const form = { ...formValues };
+                                        form.startShift = value;
+                                        const filled = !!(form.startShift && form.endShift);
+                                        const start = moment(form.startShift).format('YYYY-MM-DD hh:mm:ss');
+                                        const end = moment(form.endShift).format('YYYY-MM-DD hh:mm:ss');
+                                        if (filled) {
+                                            form.answers.set(q.qId, {
+                                                qId: q.qId,
+                                                answer: `${start} - ${end}`
+                                            })
+                                        }
+                                        isFilled(filled);
+                                        setFormValues(form);
+                                    }} renderInput={(params) => <TextField sx={{ mb: 2 }} {...params}/>} />
+                                    <DateTimePicker label="End Shift" value={endShiftValue} onChange={(value) => {
+                                        setEndShiftValue(value);
+                                        const form = { ...formValues };
+                                        form.endShift = value;
+                                        const filled = !!(form.startShift && form.endShift);
+                                        const start = moment(form.startShift).format('YYYY-MM-DD hh:mm:ss');
+                                        const end = moment(form.endShift).format('YYYY-MM-DD hh:mm:ss');
+                                        if (filled) {
+                                            form.answers.set(q.qId, {
+                                                qId: q.qId,
+                                                answer: `${start} - ${end}`
+                                            })
+                                        }
+                                        isFilled(filled);
+                                        setFormValues(form);
+                                    }} renderInput={(params) => <TextField sx={{ mb: 2 }} {...params}/>} />
+                                    </LocalizationProvider>}
+                                </Box>
                             <Stack className="ButtonStack" spacing={16} direction="row" container="true" alignItems="center" justifyContent="center"> {/* Back and next navigation buttons */}
                                 <Button variant="outlined" disabled={q.qId === 1} onClick={() => { handleBack(qIndex) }}>Back</Button> {/* Submits to the server after completing the last question */}
                                 <StyledButton variant="contained" className="NextButton" disabled={!filled} onClick={() => { handleNext(qIndex) }}>Next</StyledButton>
@@ -205,6 +228,11 @@ const Survey = (props) => {
                         </div >
                     )
                 })
+            }
+            {
+                surveyTaken && <Typography variant="h4" component="div" gutterBottom sx={{ ml: 3, mt: 3 }}> {/* Question text */}
+                {surveyTakenMessage}
+            </Typography>
             }
             {/* <button style={{marginBottom: '20px'}} onClick={() => { Original submit to server button
                 handleSubmit();

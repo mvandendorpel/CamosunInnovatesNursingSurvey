@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import passport from 'passport';
-import { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey, getDashboardInfo } from '../controllers/survey-api-controller.mjs';
+import { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey, getDashboardInfo, getShiftData, isSurveyAlreadyTaken } from '../controllers/survey-api-controller.mjs';
 import {registerNewUser, logInUser, getUserData, getUserStats} from '../controllers/user-api-controller.mjs';
 import { getStepData } from '../controllers/fb-api-controller.mjs';
+import { sleepReport, dailyReport, weeklyReport } from '../controllers/research-api-controller.mjs';
 //import {integrateFBData} from '../controllers/fb-api-controller.mjs'
 import cors from 'cors';
 
@@ -42,10 +43,6 @@ router.route('/lastsubmission')
 router.route('/dashboard')
 .get(getDashboardInfo);
 
-router.route('/about')
-.get(function(req, res) {
-    res.send('about/about.html');
-})
 router.route('/weeklysurvey', cors(corsOptionsDelegate), function(req, res, next) {
     
     next();
@@ -62,8 +59,20 @@ router.route('/weeklysurvey/:surveyType', cors(corsOptionsDelegate), function(re
     
     next();
   });
-// .patch(updateWeeklyData)
 
-// router.route('/researcher')
-// .get(getResearchData)
+
+router.route('/sleepResearch')
+.get(sleepReport);
+
+router.route('/dailyreport')
+.get(dailyReport);
+
+router.route('/weeklyreport')
+.get(weeklyReport);
+
+router.route('/shiftdata')
+.get(getShiftData);
+
+router.route('/surveytaken')
+.post(isSurveyAlreadyTaken);
 export default router;

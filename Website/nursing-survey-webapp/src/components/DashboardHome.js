@@ -66,8 +66,16 @@ const DashboardHome = () => {
   let incompleteDaily = getIncompleteSurveys(dailyArray);
   let incompleteWeekly = getIncompleteSurveys(weeklyArray);
 
-  const dailyRemaining = incompleteDaily.length - desiredLength;
-  const weeklyRemaining = incompleteWeekly.length - desiredLength;
+  let dailyRemaining = incompleteDaily.length - desiredLength;
+  let weeklyRemaining = incompleteWeekly.length - desiredLength;
+
+  if (dailyRemaining <= desiredLength){
+    dailyRemaining = "No"
+  }
+  
+  if (weeklyRemaining <= desiredLength){
+    weeklyRemaining = "No"
+  }
 
   incompleteDaily = trimSurveyArray(incompleteDaily);
   incompleteWeekly = trimSurveyArray(incompleteWeekly);

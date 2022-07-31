@@ -24,8 +24,17 @@ const client = new FitbitApiClient({
 
 const getStepData = async (req, res) => {
     try {
-        const stepQuery = `SELECT step_activity_all from fitbitdata WHERE nurses_ID = ${req.query.nurses_id} ORDER BY date DESC`;
-        const [results, metadata] = await db.sequelize.query(stepQuery);
+        // const stepQuery = `SELECT step_activity_all from fitbitdata WHERE nurses_ID = ${req.query.nurses_id} ORDER BY date DESC`;
+        // const [results, metadata] = await db.sequelize.query(stepQuery);
+        const results = await Fitbit.findAll({
+            where: {
+                nurses_ID: req.query.nurses_id
+            },
+            order: [
+                ['date', 'DESC']
+            ]
+        })
+
         let stepCount = 0;
         const stepTotalMap = await results.map((element) => {
             console.log(element.step_activity_all['activities-steps'][0].value);
@@ -88,7 +97,7 @@ const getIntervalData = async (activityData) => {
             return entry;
         }
     });
-    console.log(workActivity);
+    //console.log(workActivity);
 
     let preWorkActivity = await activityData.filter(function (entry) {
         let entryTime = new Date("1970-01-01 " + entry.time);
@@ -101,7 +110,7 @@ const getIntervalData = async (activityData) => {
             return entry;
         }
     })
-    console.log(preWorkActivity);
+    //console.log(preWorkActivity);
     let postWorkActivity = await activityData.filter(function (entry) {
         let entryTime = new Date("1970-01-01 " + entry.time);
         let entryHour = entryTime.getHours();
@@ -113,7 +122,7 @@ const getIntervalData = async (activityData) => {
             return entry;
         }
     })
-    console.log(postWorkActivity);
+    //console.log(postWorkActivity);
 
     return [activityData, workActivity, preWorkActivity, postWorkActivity];
     //TODO: Query(ies) to input the data into the DB

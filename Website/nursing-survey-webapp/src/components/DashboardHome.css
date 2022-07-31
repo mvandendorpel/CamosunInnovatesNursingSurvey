@@ -16,3 +16,7 @@
         min-width: 80%;
     }
 }
+
+.MuiButtonBase-root {
+    width: 100%;
+}

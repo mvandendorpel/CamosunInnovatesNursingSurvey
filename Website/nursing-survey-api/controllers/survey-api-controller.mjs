@@ -4,6 +4,8 @@ import {SurveyQuestion} from '../models/survey-question.model.mjs';
 import { SurveyAnswer } from '../models/surveyanswer.model.mjs';
 import { ShiftData } from '../models/shiftdata.mjs';
 import { Sequelize } from 'sequelize';
+import { decrypt, encrypt } from '../util.js';
+import { Fitbit } from '../models/fitbit.mjs';
 
 // get all the questions and offered answers from the database
 const getWeeklyQuestions = async (req, res) => {
@@ -31,6 +33,26 @@ const getWeeklyQuestions = async (req, res) => {
     });
     res.status(200).json([...map.values()]);
 };
+
+const isSurveyTaken = async (surveyDate, nurseId, surveyTypeId) => {
+    const survey = await Survey.findOne({
+        where: {
+            surveyDate: surveyDate,
+            nurses_ID: nurseId,
+            survey_type_id: surveyTypeId
+        }
+    });
+    return !!survey;
+}
+
+const isSurveyAlreadyTaken = async (req, res) => {
+    const surveyData = req.body;
+    const surveyTaken = await isSurveyTaken(surveyData.surveyDate.split('T')[0], surveyData.nurseId, surveyData.surveyTypeId);
+    res.status(200).json({
+        alreadyTaken: surveyTaken,
+        surveyDate: surveyData.surveyDate.split('T')[0]
+    })
+}
 
 // saves the survey information and answers from the user/nurses
 const postWeeklySurvey = async (req, res) => {
@@ -120,13 +142,56 @@ const getAllSurveys = async(req, res) => {
 
 const getLastSurvey = async(req, res) => {
     try {
-        const query = `SELECT * from survey INNER JOIN fitbitdata ON survey.nurses_ID = fitbitdata.nurses_ID WHERE survey.nurses_ID = ${req.query.nurses_ID} ORDER BY survey.id DESC LIMIT 1;`;
-        const [results, metadata] = await db.sequelize.query(query);
-        res.status(200).send(results[0]);
+        
+        //let [results, metadata] = await db.sequelize.query(query);
+
+        let results = await Fitbit.findAll({
+            limit: 1,
+            where: {
+                nurses_ID: req.query.nurses_id
+            },
+            order: [ [ 'id', 'DESC' ] ]
+        })
+
+        const surveyQuery = `SELECT q.*, sa.answer, q.id, s.surveyDate, s.id as surveyID FROM mydb.survey s INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id
+            INNER JOIN question q ON q.id = sq.Question_Id
+            INNER JOIN surveyanswer sa ON sq.id=sa.survey_question_id 
+            WHERE s.nurses_ID = ${req.query.nurses_id} AND  s.id = ${results[0].survey_ID}`;
+
+        const surveyQuestions = await db.sequelize.query(surveyQuery, {
+            type: db.sequelize.QueryTypes.SELECT,
+        })
+
+        const query = `SELECT * from survey  WHERE nurses_ID = ${req.query.nurses_id} AND id = ${results[0].survey_ID} LIMIT 1;`;
+        let surveyData = await db.sequelize.query(query, {
+            type: db.sequelize.QueryTypes.SELECT,
+        })
+
+        // results = results.map(el => {
+        //     el.step_activity_all = JSON.parse(decrypt(el.step_activity_all.replaceAll('"','')));
+        //     el.step_activity_shift = JSON.parse(decrypt(el.step_activity_shift.replaceAll('"','')));
+        //     el.step_activity_preshift = JSON.parse(decrypt(el.step_activity_preshift.replaceAll('"','')));
+        //     el.step_activity_postshift = JSON.parse(decrypt(el.step_activity_postshift.replaceAll('"','')));
+        //     el.hr_activity_all = JSON.parse(decrypt(el.hr_activity_all.replaceAll('"','')));
+        //     el.hr_activity_shift = JSON.parse(decrypt(el.hr_activity_shift.replaceAll('"','')));
+        //     el.hr_activity_preshift = JSON.parse(decrypt(el.hr_activity_preshift.replaceAll('"','')));
+        //     el.hr_activity_postshift = JSON.parse(decrypt(el.hr_activity_postshift.replaceAll('"','')));
+        //     const decryptedSleep = decrypt(el.sleep.replaceAll('"',''));
+        //     el.sleep = decryptedSleep ? JSON.parse(decryptedSleep) : '';
+        //     //el.sleep = JSON.parse(decrypt(el.sleep.replaceAll('"','')));
+        //     return el;
+        // })
+
+        const response = {
+            results,
+            surveyData,
+            surveyQuestions
+        }
+        res.status(200).send(response);
     }
     catch(err) {
         console.log(err);
-        res.status(500).send(error);
+        res.status(500).send(err);
     }
 }
 
@@ -138,8 +203,7 @@ const getDashboardInfo = async(req, res) => {
         for (surveyDateCheck; surveyDateCheck >= studyStart; surveyDateCheck.setDate(surveyDateCheck.getDate() - 1)) {
             dailySurveyPeriod.push(`${surveyDateCheck.getFullYear()}-${('0' + (surveyDateCheck.getMonth()+1)).slice(-2)}-${('0' + surveyDateCheck.getDate()).slice(-2)}`);
         }
-        //('0' + MyDate.getDate()).slice(-2) + '/'
-        //+ ('0' + (MyDate.getMonth()+1)).slice(-2) + '/'
+
         const dailSurveyData = await Survey.findAll({
             where: {
                 surveyDate: {
@@ -195,8 +259,24 @@ const getDashboardInfo = async(req, res) => {
 
 }
 
+const getShiftData = async (req, res) => {
+    if (!req.query.survey_id) {
+        res.status(500).send('Missing survey id');
+    }
+    try {
+        const shiftData = await ShiftData.findAll({
+            where: {
+                Survey_Id: req.query.survey_id
+            }
+        });
+        res.status(200).json(shiftData);
+    } catch(err) {
+        res.status(500).send(err)
+    } 
+}
 
 
 
-export { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey, getDashboardInfo};
+
+export { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey, getDashboardInfo, getShiftData, isSurveyAlreadyTaken};
 

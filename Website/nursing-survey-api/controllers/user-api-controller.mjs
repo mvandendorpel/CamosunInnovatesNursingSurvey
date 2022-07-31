@@ -152,31 +152,64 @@ const getUserData = async (req, res) => {
 
 }
 
+function filterOutNull(item) {
+    return (item != null && item != NaN);
+  }
+
 const getUserStats = async(req, res) => {
     try {
-        const query = `SELECT hr_activity_all, sleep from fitbitdata WHERE nurses_ID = ${req.query.nurses_id}`;
-        const [results, metadata] = await db.sequelize.query(query);
-        //console.log(results[0]['hr_activity_all']['activities-heart']);
-        const sleepInfo = await results.map((element) => {
-            //console.log("Sleep Stage: " + element?.sleep?.summary?.stages);
-            if (element?.sleep?.summary?.stages !== null) {
-                return element?.sleep?.summary?.stages;
+        const sleepQuery = `SELECT sleep from fitbitdata WHERE nurses_ID = ${req.query.nurses_id}`;
+        const [sleepResults, metadata] = await db.sequelize.query(sleepQuery);
+        const sleepInfo = await sleepResults.map((element) => {
+                return element?.sleep?.summary?.stages;          
+        });
+        const now = new Date();
+
+        const heartQuery = `select hr_activity_all FROM fitbitdata WHERE nurses_ID = ${req.query.nurses_id} ORDER BY date LIMIT 7`;
+        const [heartResults, metadataTwo] = await db.sequelize.query(heartQuery);
+        const heartRateInfo = await heartResults.map((element) => {
+            //console.log(element['hr_activity_all']['activities-heart']);
+            if (element['hr_activity_all']['activities-heart'][0].value.restingHeartRate != null) {
+                return {            
+                    "dateTime": element['hr_activity_all']['activities-heart'][0].dateTime,
+                    "restingHeartRate": element['hr_activity_all']['activities-heart'][0].value.restingHeartRate
+                }
+            }
+            else {
+                return {
+                    "dateTime": element['hr_activity_all']['activities-heart'][0].dateTime,
+                    "restingHeartRate": null
+                }
             }
         });
-        console.log("Sleep Info: " + sleepInfo);
-        const heartRateInfo = await results.map((element) => {
-            //console.log(element['hr_activity_all']['activities-heart']);
-            return element['hr_activity_all']['activities-heart'];
-        });
+        const query = `SELECT q.*, sa.answer, q.id FROM mydb.survey s INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id
+        INNER JOIN question q ON q.id = sq.Question_Id
+        INNER JOIN surveyanswer sa ON sq.id=sa.survey_question_id 
+        WHERE s.nurses_ID = ${req.query.nurses_id} AND s.survey_type_id = 1 AND q.id = 5 OR q.id = 7`;
 
-        console.log(heartRateInfo);
-        //const sleepObj = await JSON.parse(sleepInfo);
-        //const HRObj = await JSON.parse(heartRateInfo);
+        let [fatigueResults, metadataThree] = await db.sequelize.query(query);
+        fatigueResults = fatigueResults.map(element => {
+            return parseInt(decrypt(element.answer).slice(0));
+        })
 
-        const mergedData = sleepInfo.concat(heartRateInfo);
+        const fatigueResponse = new Array(7).fill(0);
 
-        console.log(JSON.stringify(mergedData));
-        res.status(200).send(mergedData);
+        fatigueResults.map(element => {
+            if (element != null) {
+                fatigueResponse[element - 1]++;
+            }
+        })
+        console.log(fatigueResults)
+        //const fatigueResponse = fatigueResults.filter(filterOutNull)
+        const sleepResponse = sleepInfo.filter(filterOutNull);
+        const heartRateResponse = heartRateInfo.filter(filterOutNull);
+
+        const responseData = {
+            sleepResponse,
+            heartRateResponse,
+            fatigueResponse
+        }
+        res.status(200).send(responseData);
     }
     catch(err) {
         console.log(err);
