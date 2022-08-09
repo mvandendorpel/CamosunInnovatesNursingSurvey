@@ -14,13 +14,13 @@ import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import axios from 'axios';
-import jwtDecode, { JwtPayload } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import './DashboardHome.css'
 const DashboardHome = () => {
   const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage
   const decoded = jwtDecode(authToken); // decodes token
   const userID = decoded.userID;  // gets userID from token
-  const [data, setData] = useState([]); // response data
+  //const [data, setData] = useState([]); // response data
   const [daily, setDaily] = useState([]); // daily survey data from response
   const [weekly, setWeekly] = useState([]); // weekly survey data from response
   const [open, setOpen] = React.useState(true);
@@ -29,7 +29,7 @@ const DashboardHome = () => {
   const getUserInfo = async () => {
     try {
         const userData = await axios.get(`${apiURL}?nurses_id=${userID}`);
-        setData(userData.data);
+        //setData(userData.data);
         setDaily(userData.data.dailySurveyList);
         setWeekly(userData.data.weeklySurveyList);
     } catch (e) {
@@ -47,7 +47,7 @@ const DashboardHome = () => {
   const weeklyArray = (weekly);
   function getIncompleteSurveys(fullArray){ // filters all incomplete arrays from an array of surveys
     let incompleteArray = fullArray.map((item) => {
-      if (item.surveyComplete == false){ //appends to new array if the user hasn't completed a survey
+      if (item.surveyComplete === false){ //appends to new array if the user hasn't completed a survey
         return item.surveyDate;
       }
     });

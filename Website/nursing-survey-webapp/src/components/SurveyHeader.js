@@ -95,6 +95,7 @@ const SurveyHeader = (props) => {
         {props.title}         
         <Tooltip title="Account settings"> 
           <IconButton
+            sx={{width: "56px"}}
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined} onClick={handleClick} className="profile-pic" aria-label="profile">
