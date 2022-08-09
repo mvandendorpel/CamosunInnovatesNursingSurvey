@@ -53,8 +53,6 @@ const DashboardHome = () => {
     });
     
     incompleteArray = incompleteArray.filter(e => e); // removes all null values from the array
-    //incompleteArray = trimSurveyArray(incompleteArray);
-    //incompleteArray.reverse();
     return incompleteArray;
   }
 

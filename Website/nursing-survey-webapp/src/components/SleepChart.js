@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
     CartesianGrid,
@@ -33,13 +33,11 @@ function calPercnt(num, total){ // takes the total minutes of sleep and calculat
   return parseFloat(result.toFixed(0));
 }
 
-
 const labelFormatter = (value) => { // adds a percentage to the charts
     return value + '%';
 };
 
 const SleepChart = (props) => {
-  
   function waitForElement(){
     if(typeof props.data !== "undefined"){
       const totalSleepMins = (props.data[0].deep + props.data[0].light + props.data[0].rem + props.data[0].wake); // total number of minutes asleep

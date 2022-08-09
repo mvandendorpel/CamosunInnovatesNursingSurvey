@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import jwtDecode, { JwtPayload } from "jwt-decode";
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 const FatigueChart = (props) => {
 
@@ -10,7 +8,6 @@ const FatigueChart = (props) => {
     if(typeof props.data !== "undefined"){
       (props.data).forEach((item, index) => {
         let i = {
-          
           name: index+=1,
           value: item
         };
@@ -22,34 +19,34 @@ const FatigueChart = (props) => {
   }
   console.log(props.data);
   waitForElement();
-    return (
-        <>
-            <ResponsiveContainer height={200} width={"100%"}>
-              <BarChart
-                data={items}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 0,
-                  bottom: 5,
-                }}
-                barGap={0}
-                maxBarSize={20}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="name"
-                />
-                <YAxis/>
-                <Bar
-                  dataKey="value"
-                  animationDuration={1000}
-                  fill='#214971'
-                />
-              </BarChart>
-            </ResponsiveContainer>
-      </>
-      );
+  return (
+    <>
+      <ResponsiveContainer height={200} width={"100%"}>
+        <BarChart
+          data={items}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 0,
+            bottom: 5,
+          }}
+          barGap={0}
+          maxBarSize={20}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="name"
+          />
+          <YAxis/>
+          <Bar
+            dataKey="value"
+            animationDuration={1000}
+            fill='#214971'
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </>
+  );
 }
 
 export default FatigueChart;
