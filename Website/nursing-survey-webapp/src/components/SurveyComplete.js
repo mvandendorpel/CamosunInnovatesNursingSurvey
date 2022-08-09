@@ -2,61 +2,59 @@ import React, { useEffect, useState } from 'react';
 import SurveyHeader from './SurveyHeader';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-
-import axios from 'axios';
-import jwtDecode, { JwtPayload } from "jwt-decode";
 import "./SurveyComplete.css"
 
-const SurveyComplete = ()  => {
+const SurveyComplete = (props)  => {
 
-    const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage
-    const decoded = jwtDecode(authToken); 
-    const userID = decoded.userID  
-    const [data, setData] = useState([]);
-    const apiURL = "https://10.51.253.2:3004/api/lastsubmission";
-    const getUserStats = async () => {
-        try {
-            const userData = await axios.get(`${apiURL}?nurses_id=${userID}`);
-            setData(userData.data);
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
+    const [step, setStep] = useState();
+    const [heart, setHeart] = useState();
+    const [responses, setResponses] = useState([]);
+    const respList = [];
+    
     useEffect(() => {
-        getUserStats();
-    }, []); 
-
-    console.log(data);
-
-    const results = data?.results[0];
-    const stepdata = results.step_activity_all['activities-steps']?.[0].value;
-    let heartdata = "no data"
-    if (typeof results.hr_activity_all['activites-heart']?.[0].value.restingHeartRate != "undefined"){
-        heartdata = results.hr_activity_all['activites-heart']?.[0].value.restingHeartRate;
-    }
+        const onPageLoad = () => {
+            let data = props.data.results;
+            setStep(data[0]?.step_activity_all['activities-steps']?.[0].value);
+            setHeart(data[0]?.hr_activity_all['activities-heart']?.[0].value.restingHeartRate);
+            setResponses(props.data.surveyQuestions);
+        };
+      
+          // Check if the page has already loaded
+          if (document.readyState === "complete") {
+            onPageLoad();
+            
+          } else {
+            window.addEventListener("load", onPageLoad);
+            // Remove the event listener when component unmounts
+            return () => window.removeEventListener("load", onPageLoad);
+          }
+    }, []);
+    
+    responses.forEach((item) => {
+        respList.push(<p key={item.id} >Q: {item.questionText} <br/> A: {item.answer}</p>) 
+    })
     
     return(
         <>
             <SurveyHeader title={'Thanks!'} />
-            <Box sx={{width:"80%", mx: "auto", mt: 2}} >
+            <Box sx={{width:"80%", mx: "auto", mt: 4}} >
                 <Typography variant="h4" gutterBottom component="div">
                     Your Steps 
                 </Typography>
                 <Typography variant="h6" gutterBottom component="div">
-                    {stepdata}
+                    {step ?? "Not yet loaded"}
                 </Typography>
                 <Typography variant="h4" gutterBottom component="div">
                     Your Heart Rate 
                 </Typography>
                 <Typography variant="h6" gutterBottom component="div">
-                    {heartdata}
+                    {heart ?? "Not yet loaded"}
                 </Typography>
                 <Typography variant="h4" gutterBottom component="div">
                     Your Responses
                 </Typography>
                 <Typography variant="h6" gutterBottom component="div">
-                    h6. Heading
+                   {respList ?? "Not yet loaded"}
                 </Typography>
             </Box>
         </>

@@ -8,7 +8,7 @@ import SignUp from './components/SignUp.js';
 import Login from './components/Login.js';
 import ForgotPassword from './components/ForgotPassword.js';
 import Survey from './components/Survey';
-import SurveyComplete from './components/SurveyComplete';
+import SurveyCompleteDataFetch from './components/SurveyCompleteDataFetch';
 import Profile from './components/Profile.js';
 import UserStats from './components/UserStats.js';
 import DashboardHome from './components/DashboardHome';
@@ -22,7 +22,7 @@ root.render(
           <Route path="/" element={<DashboardHome/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/survey/:surveyType" element={<Survey />} />
-          <Route path="/surveycomplete" element={<SurveyComplete />} />
+          <Route path="/surveycomplete" element={<SurveyCompleteDataFetch />} />
           <Route path="/signup" element={<SignUp />} />
             
           <Route path="/forgot" element={<ForgotPassword />} />

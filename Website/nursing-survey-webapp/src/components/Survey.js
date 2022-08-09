@@ -95,6 +95,7 @@ const Survey = (props) => {
         } 
         else {
             setAnswers(surveyData.answers);
+            window.location.href = 'https://10.51.253.2:3000/surveycomplete';
         }
         setFormSubmitted(true); // updates the state to show that the form is submitted
     }
@@ -103,7 +104,7 @@ const Survey = (props) => {
         let x = document.getElementById(index); //The current question HTML element block
         x.style.display = 'none'; //Hides it
         console.log(index);
-        if ((questions.length - 1) === index) { //Hardcoded for this quiz length, TODO: Find new solution for variable length quizzes.
+        if ((questions.length - 1) === index) { 
             handleSubmit();
         }
         isFilled(false);
@@ -159,7 +160,7 @@ const Survey = (props) => {
                                 <RadioGroup>
                                     {q.answers && q.answers.map((ans, index) => (
                                       
-                                            <FormControlLabel key={index}  label={ans.answerText} control={<Radio className="qRadio" />} name={'q' + q.qId} sx={{ ml: 2, }} onClick={(e) => {
+                                            <FormControlLabel key={index}  label={ans.answerText} control={<Radio sx={{width: '10%'}} className="qRadio" />} name={'q' + q.qId} sx={{ ml: 2, }} onClick={(e) => {
                                                 handleSelectedAnswer(q, ans, qIndex);
                                             }} type="radio" value={ans.answerId} />
                                        
