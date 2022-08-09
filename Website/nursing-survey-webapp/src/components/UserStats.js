@@ -39,7 +39,7 @@ const UserStats = (props) => {
                 <Typography ml={2} variant="h6" gutterBottom component="div">
                     Sleep
                 </Typography>
-                <SleepChart />
+                <SleepChart data={data.sleepResponse}/>
                 <Typography ml={2} variant="h6" gutterBottom component="div">
                     Base Heart Rate
                 </Typography>
