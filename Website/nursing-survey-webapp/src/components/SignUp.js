@@ -31,7 +31,25 @@ const Form = ({ handleClose }) => {
         password: password,
         firstName: firstName,
         lastName: lastName
-      });
+      }).then(
+        
+        window.location.href = "https://10.51.253.2:3000/login" // redirects to login after signing up
+      );
+      
+      // try {
+      //   const authToken = await axios.post('https://10.51.253.2:3004/api/login', {
+      //     username: username,
+      //     password: password
+      //   });
+      //   if (authToken) {
+      //     localStorage.setItem('authToken', authToken.data.token);
+      //     console.log('success');
+      //     navigate('/');
+      //   }
+      // } catch (e) {
+      //   console.log(e);
+      //   alert('Incorrect email or password!')
+      // }
     } catch (e) {
       console.log(e);
     }
