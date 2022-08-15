@@ -143,9 +143,6 @@ const SurveyHeader = (props) => {
           Profile 
           
         </MenuItem>
-        <MenuItem onClick={() => alert("Not Currently Functional")}>
-          My account
-        </MenuItem>
     
         <MenuItem onClick={() => logout()}>
           <ListItemIcon>

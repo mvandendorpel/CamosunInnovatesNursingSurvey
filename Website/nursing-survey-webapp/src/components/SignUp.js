@@ -57,7 +57,7 @@ const Form = ({ handleClose }) => {
   
   return (
     <>
-    <IconButton aria-label="close" size="large" className="CloseButton" href="/login" sx={{color: 'white'}}>
+    <IconButton aria-label="close" size="large" className="CloseButton" href="/login" sx={{color: 'white', width: '10%'}}>
       <CloseIcon className="CloseButton" />
     </IconButton>
 
@@ -155,7 +155,7 @@ const Form = ({ handleClose }) => {
       />
 
       <div className="SubmitButton">
-          <Button type="submit" variant="contained" color="primary">
+          <Button type="submit" variant="contained" color="primary" sx={{mt: 2}}>
             Sign Up
           </Button>  
       </div>

@@ -85,7 +85,7 @@ const Form = ({ handleClose }) => {
     />
     
     <div className="SubmitButton">
-      <Button type="submit" variant="contained" color="primary">
+      <Button type="submit" variant="contained" color="primary" sx={{mt:2}}>
         Log In
       </Button>
       <Button variant="text" href="/signup">Sign Up</Button>
