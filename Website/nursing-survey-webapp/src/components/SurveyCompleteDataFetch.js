@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SurveyComplete from './SurveyComplete';
 import axios from 'axios';
-import jwtDecode, { JwtPayload } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
 const SurveyCompleteDataFetch = () => {
     const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage

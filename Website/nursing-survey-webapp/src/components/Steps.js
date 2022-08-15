@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import SurveyHeader from './SurveyHeader';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
-import jwtDecode, { JwtPayload } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
 import "./UserStats.css";
 const Steps = (props) => {

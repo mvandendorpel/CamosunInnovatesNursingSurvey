@@ -5,7 +5,6 @@ import MailIcon from '@mui/icons-material/Mail';
 import LockIcon from '@mui/icons-material/Lock';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import axios from 'axios';
 import './SignUp.css'
 import { useNavigate } from 'react-router-dom';

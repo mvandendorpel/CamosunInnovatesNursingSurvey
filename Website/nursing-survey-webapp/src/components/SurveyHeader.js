@@ -10,9 +10,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from "react-router-dom";
-import Box from '@mui/material/Box';
 import axios from 'axios';
-import jwtDecode, { JwtPayload } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -56,19 +55,19 @@ const SurveyHeader = (props) => {
   const userID = decoded.userID  
   const [data, setData] = useState([]);
   const apiURL = "https://10.51.253.2:3004/api/users";
-  const getUserInfo = async () => {
-    try {
-        const userData = await axios.get(`${apiURL}?nurses_id=${userID}`);
-        setData(userData.data[0]);
-        
-    } catch (e) {
-        console.log(e);
-    }
-  }
+  
 
   useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+          const userData = await axios.get(`${apiURL}?nurses_id=${userID}`);
+          setData(userData.data[0]);
+          
+      } catch (e) {
+          console.log(e);
+      }
+    }
     getUserInfo();
-    console.log(`${data.firstName} ${data.lastName}`);
   }, []); 
 
   const [anchorEl, setAnchorEl] = React.useState(null);
