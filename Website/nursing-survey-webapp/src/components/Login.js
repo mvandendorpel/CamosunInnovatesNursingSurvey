@@ -73,9 +73,7 @@ const Form = ({ handleClose }) => {
       required
       value={password}
       placeholder="********"
-      helperText={<Link href="/forgot" variant="body2" underline="none" >
-        {'Forgot your password?'}
-      </Link>}
+      
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
