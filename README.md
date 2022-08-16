@@ -7,12 +7,12 @@ This project was commissioned by Camosun Innovates for use in a study of periope
 
 This project was built by students at Camosun College for the 2022 Capstone Program.
 
-3.2  Front End
+Front End
 --------------
 
 The front end is used by survey subjects to complete daily and weekly surveys, as well as review some of the data collected through the surveys and collected by the Fitbit device.
 
-### 3.2.1 Major Modules
+### Major Modules
 
 [React](https://www.npmjs.com/package/react-scripts) -- User Interface module for building front end applications
 
@@ -24,7 +24,7 @@ The front end is used by survey subjects to complete daily and weekly surveys, a
 
  [Jwt-decode](https://www.npmjs.com/package/jwt-decode) -- Allows decoding of security token to send data to/from API
 
-### 3.2.2 Pages
+### Pages
 
 Login/Signup -- Pages for registering on site and logging in.
 
@@ -36,7 +36,7 @@ Daily Survey -- Contains a list of questions including a calendar to input user'
 
 Weekly Survey -- List of questions. Does not gather Fitbit data so remains on website after submission
 
-### 3.2.3 Usage
+### Usage
 
 Server is run with the command:
 
@@ -44,29 +44,24 @@ Server is run with the command:
 
 HTTPS is needed as the front-end and API use SSL certificates. Because this was developed behind a VPN, the site uses a self-signed certificate.
 
-3.3  Back End
+Back End
 -------------
 
 The database is built with MySQL, and currently runs on the same server as the API. All personal information, including survey answers and Fitbit data, is stored in an encrypted state.
 
-### 3.3.1 Database Model
 
-![](file:///C:/Users/chaos/AppData/Local/Temp/msohtmlclip1/01/clip_image002.jpg)
-
-Figure 9 Database Model
-
-### 3.3.2 Data Encryption
+### Data Encryption
 
 After decryption, all entries in **fitbitdata** are stored in JSON format. The tables **user, user_info, surveyanswer,** and **shiftdata** will also contain encrypted entries.
 
-### 3.3.3 Usage
+### Usage
 
 Command to run the MySQL server will vary by setup. The script containing all tables is found inside the Documentation folder.
 
-3.4  API
+API
 --------
 
-### 3.4.1 Major Modules
+### Major Modules
 
 [Express](https://www.npmjs.com/package/express) -- Middleware to run the API
 
@@ -80,7 +75,7 @@ Command to run the MySQL server will vary by setup. The script containing all ta
 
 [XLSX](https://www.npmjs.com/package/xlsx) -- Exports data from API
 
-### 3.4.2 Endpoints
+### Endpoints
 
 /authorize -- Redirects to Fitbit API for oauth2 authentication
 
@@ -112,7 +107,7 @@ Command to run the MySQL server will vary by setup. The script containing all ta
 
 See documentation on Research Tool for more information on these reports
 
-### 3.4.2 Usage
+### Usage
 
 Usage of the API will require an SSL certificate. The application is currently using a self-signed certificate.
 
@@ -120,14 +115,14 @@ The API can be run with the command:
 
 **npm run dev**
 
-3.5  Future Development
+Future Development
 -----------------------
 
-### 3.5.1 Oauth2 Login
+### Oauth2 Login
 
 Fitbit's API supports Oauth2 authentication through the web app. The project could be modified to use Fitbit's own account data, rather than creating a separate login for this web app.
 
-### 3.5.2 Expansion of Research Tool
+### Expansion of Research Tool
 
 1. Allow modification of survey questions stored within the database
 
@@ -137,7 +132,7 @@ Fitbit's API supports Oauth2 authentication through the web app. The project cou
 
 4. Allow the researcher to select which data appears on each report
 
-### 3.5.3 Front End
+### Front End
 
 1. The weekly surveys could be modified to allow users to determine which dates start and end the week.
 
@@ -145,7 +140,7 @@ Fitbit's API supports Oauth2 authentication through the web app. The project cou
 
 3. Landing page after daily survey completion could be created.
 
-### 3.5.4 API
+### API
 
 1. A method of exported nested JSON to Excel would simplify the spreadsheets exported.
 
