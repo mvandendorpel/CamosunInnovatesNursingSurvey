@@ -10,9 +10,11 @@ import FitbitApiClient from "fitbit-node";
 import db from '../models/index.mjs';
 import { Fitbit } from '../models/fitbit.mjs';
 
+//WAS ORIGINALLY BUILT AS CONTROLLER FOR GATHERING DATA FROM FITBIT API, BUT COULD NOT GET THE API CALLS TO WORK IN HERE.  ANY MANIPULATION OF DATA FROM FITBIT API, OR OUR API TO THAT DATA, SHOULD BE DONE HERE.
+
 dotenv.config();
 
-//Represents the amount of time(in hours) to collect before and after the user's work shift
+//Represents the amount of time(in minutes) to collect before and after the user's work shift
 const PREWORK_PERIOD = 120;
 const POSTWORK_PERIOD = 120;
 
@@ -21,7 +23,11 @@ const client = new FitbitApiClient({
     clientSecret: `${process.env.FB_CLIENT_SECRET}`,
     apiVersion: "1.2"
 })
+/**
+ * Returns step data for the Steps page in user profile.  Returns total steps, avg steps, and the number of steps for the last dataset found.
+ * @param  {} req.query.nurses_id
 
+ */
 const getStepData = async (req, res) => {
     try {
         // const stepQuery = `SELECT step_activity_all from fitbitdata WHERE nurses_ID = ${req.query.nurses_id} ORDER BY date DESC`;
@@ -36,7 +42,9 @@ const getStepData = async (req, res) => {
         })
 
         let stepCount = 0;
-        const stepTotalMap = await results.map((element) => {
+        console.log(results)
+        const stepTotalMap = results.map((element) => {
+            
             console.log(element.step_activity_all['activities-steps'][0].value);
             stepCount += parseInt(element.step_activity_all['activities-steps'][0].value);
         })
@@ -51,6 +59,7 @@ const getStepData = async (req, res) => {
             "avgSteps": stepAvg,
             "todaySteps": todaySteps
         };
+        console.log(response)
         res.status(200).send(response);
     }
     catch(err) {
@@ -125,56 +134,7 @@ const getIntervalData = async (activityData) => {
     //console.log(postWorkActivity);
 
     return [activityData, workActivity, preWorkActivity, postWorkActivity];
-    //TODO: Query(ies) to input the data into the DB
-
-        // const {
-        //     nurses_ID,
-        //     date,
-        //     step_activity_all,
-        //     step_activity_shift,
-        //     step_activity_preshift,
-        //     step_activity_postshift,
-        //     hr_activity_all,
-        //     hr_activity_shift,
-        //     hr_activity_preshift,
-        //     hr_activity_postshift,
-        //     sleep,
-        //     survey_ID
-        // } = req.body;
-
-        const fitbit = await Fitbit.create({
-            nurses_ID,
-            date,
-            step_activity_all,
-            step_activity_shift,
-            step_activity_preshift,
-            step_activity_postshift,
-            hr_activity_all,
-            hr_activity_shift,
-            hr_activity_preshift,
-            hr_activity_postshift,
-            sleep,
-            survey_ID
-        });
-    
-
-     //pulling fitbitdata
-     const queryFitbit = 'SELECT * FROM fitbitdata' //TODO: Query to get shift data
-
-     const fitbitResult = db.sequelize.query(queryFitbit);
-
 
 }
 export {getIntervalData, getStepData};
                 
-// function checkTime() {
-//     var d = new Date(); // current time
-//     var hours = d.getHours();
-//     var mins = d.getMinutes();
-//     var day = d.getDay();
-
-//     return day >= 1
-//         && day <= 5
-//         && hours >= 9 
-//         && (hours < 17 || hours === 17 && mins <= 30);
-// }

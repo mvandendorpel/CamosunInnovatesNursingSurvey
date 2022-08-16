@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Research Interface</title>
+    <script>
+        function loadData() {
+            axios.get('https://10.51.253.2:3004/api/userlist')
+            .then(function (res) {
+                console.log(res.data[0]);
+                var select = document.getElementById('userSelect');
+                for (var i = 0; i < res.data.length; i++) {
+                    var opt = document.createElement('option');
+                    opt.value = res.data[i].ID;
+                    opt.innerHTML = (res.data[i].firstName + " " + res.data[i].lastName);
+                    select.appendChild(opt);
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            })
+        }
+
+        function getReport() {
+            var startDate = document.getElementById('start').value;
+            var endDate = document.getElementById('end').value;
+            var userID = document.getElementById('userSelect').value;
+            var reportType = document.querySelector('input[name="reportType"]:checked').value;
+            console.log(`https://10.51.253.2:3004/api/${reportType}?nurses_id=${userID}&periodStart=${startDate}&periodEnd=${endDate}`)
+            const data = axios.get(`https://10.51.253.2:3004/api/${reportType}?nurses_id=${userID}&periodStart=${startDate}&periodEnd=${endDate}`);
+
+        }
+
+    </script>
+    
+  </head>
+  <body onload="loadData()">
+	<script src="index.mjs"></script>
+    <div id="body">
+        <h3>Select Report</h3>
+        <form>
+            <select id="userSelect" name="userSelect">
+
+            </select>
+            <input type="radio" id="sleepReportBox" name="reportType" value="sleepResearch">
+            <label for="sleepReportBox">Sleep Report</label>
+            <input type="radio" id="dailyReportBox" name="reportType" value="dailyreport">
+            <label for="sleepReportBox">Daily Report</label>
+            <input type="radio" id="sleepReportBox" name="reportType" value="weeklyreport">
+            <label for="sleepReportBox">Weekly Report</label>
+            <h4>Start Date:</h4>
+            <input type="date" id="start" name="start-date" min="2022-03-01" max="2022-08-20" value="2022-07-01">
+            <h4>End Date:</h4>
+            <input type="date" id="end" name="end-date" min="2022-03-01" max="2022-08-20" value="2022-08-01">
+            <button type="button" onclick="getReport()">Generate Report</button>
+        </form>
+        <table id="dataTable"></table>
+    </div>
+
+
+
+  </body>
+</html>

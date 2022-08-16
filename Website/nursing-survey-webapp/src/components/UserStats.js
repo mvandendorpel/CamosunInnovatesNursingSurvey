@@ -12,11 +12,8 @@ import "./UserStats.css";
 const UserStats = (props) => {
     const title = 'My Stats';
 
-    
-    
     const [data, setData] = useState([]);
     const apiURL = "https://10.51.253.2:3004/api/userstats";
-    
 
     useEffect(() => {
         const authToken = window.localStorage.getItem('authToken'); // retrieves the saved token from localstorage

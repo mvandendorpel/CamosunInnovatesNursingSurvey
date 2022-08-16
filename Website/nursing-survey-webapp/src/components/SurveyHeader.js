@@ -57,12 +57,11 @@ const SurveyHeader = (props) => {
   const apiURL = "https://10.51.253.2:3004/api/users";
   
 
-  useEffect(() => {
+  useEffect(() => { // retrieves user data for user's name
     const getUserInfo = async () => {
       try {
           const userData = await axios.get(`${apiURL}?nurses_id=${userID}`);
           setData(userData.data[0]);
-          
       } catch (e) {
           console.log(e);
       }
@@ -86,11 +85,10 @@ const SurveyHeader = (props) => {
   
   return (
     <React.Fragment>
-      
       <Typography className="survey-header" variant="h4" component="div" gutterBottom sx={{ml: 4.5, mt: 6, color: "white"}}>
-      <IconButton sx={{width: "unset", color:"white", padding:"0 20px 5px 0"}} component={Link} to="/">
-            <HomeIcon sx={{width:"1.5em", height:"1.5em"}}/>
-          </IconButton>
+        <IconButton sx={{width: "unset", color:"white", padding:"0 20px 5px 0"}} component={Link} to="/">
+          <HomeIcon sx={{width:"1.5em", height:"1.5em"}}/>
+        </IconButton>
         {props.title}         
         <Tooltip title="Account settings"> 
           <IconButton
@@ -100,7 +98,6 @@ const SurveyHeader = (props) => {
             aria-expanded={open ? 'true' : undefined} onClick={handleClick} className="profile-pic" aria-label="profile">
             <Avatar {...stringAvatar(`${data.firstName} ${data.lastName}`)} />
           </IconButton>
-          
         </Tooltip>
       </Typography>
       <Menu
@@ -110,8 +107,8 @@ const SurveyHeader = (props) => {
         onClose={handleClose}
         onClick={handleClose}
         PaperProps={{
-        elevation: 0,
-        sx: {
+          elevation: 0,
+          sx: {
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             mt: 1.5,
@@ -133,14 +130,13 @@ const SurveyHeader = (props) => {
                 transform: 'translateY(-50%) rotate(45deg)',
                 zIndex: 0,
             },
-        },
+          },
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem button component={Link} to="/profile">
           Profile 
-          
         </MenuItem>
     
         <MenuItem onClick={() => logout()}>

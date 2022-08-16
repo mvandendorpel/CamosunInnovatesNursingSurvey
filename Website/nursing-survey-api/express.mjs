@@ -9,8 +9,6 @@ import apiRouter from './routers/api-router.mjs';
 import rateLimit from 'express-rate-limit';
 import passport from 'passport';
 import FitbitApiClient from "fitbit-node";
-import dotenv from 'dotenv';
-import mergeJSON from 'merge-json';
 import {getIntervalData} from './controllers/fb-api-controller.mjs';
 import { Fitbit } from './models/fitbit.mjs';
 import { SurveyAnswer } from './models/surveyanswer.model.mjs';
@@ -19,6 +17,7 @@ import { UserProfile } from './models/userProfile.mjs';
 import sequelize from 'sequelize';
 import { decrypt, encrypt } from './util.js';
 import { Op } from 'sequelize';
+import dotenv from 'dotenv';
 
 dotenv.config();
 const scope = 'activity heartrate location nutrition profile settings sleep weight'
@@ -105,11 +104,11 @@ const u = await User.findOne({
 //     user.lastName = decrypt(user.lastName);
 //     return user;
 // })
-console.log('user data', u)
+//console.log('user data', u)
 
-app.get('/', (req, res) => {
-    res.send("Node.js server is live");
-})
+// app.get('/', (req, res) => {
+//     res.send("Node.js server is live");
+// })
 
 app.get('/authorize', (req, res) => {
     res.redirect(client.getAuthorizeUrl(scope, `https://10.51.253.2:3004/fb`,[],req.query.surveyId));
@@ -239,7 +238,7 @@ app.get('/fb', async (req, res) => {
         //     survey_ID
         // });
        // res.status(200).send(collectedData);
-        res.redirect('https://10.51.253.2:3000');
+        res.redirect('https://10.51.253.2:3000/surveycomplete');
         //res.send(collectedData);
     }
 }

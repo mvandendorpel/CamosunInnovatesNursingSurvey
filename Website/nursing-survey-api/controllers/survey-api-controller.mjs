@@ -7,7 +7,12 @@ import { Sequelize } from 'sequelize';
 import { decrypt, encrypt } from '../util.js';
 import { Fitbit } from '../models/fitbit.mjs';
 
-// get all the questions and offered answers from the database
+// CONTROLLER FILE FOR ENDPOINTS RELATING TO USER SURVEYS.  IN GENERAL, THIS DOES NOT CONTROL UPDATING THE FITIBT DATA, THAT IS DONE IN EXPRESS.JS.  THIS WILL RETURN DATA FROM THAT TABLE IN CERTAIN ENDPOINTS
+ 
+/**
+ * get all the questions and offered answers from the database
+ * @param  {} req.params.surveyType Type of survey(daily/weekly)
+ */
 const getWeeklyQuestions = async (req, res) => {
     const surveyType = req.params.surveyType || 1;
     // query to get the questions in db
@@ -34,6 +39,14 @@ const getWeeklyQuestions = async (req, res) => {
     res.status(200).json([...map.values()]);
 };
 
+
+/**
+ * Check if the survey being submitted already exists in the DB
+ * @param  {} surveyDate
+ * @param  {} nurseId
+ * @param  {} surveyTypeId
+
+ */
 const isSurveyTaken = async (surveyDate, nurseId, surveyTypeId) => {
     const survey = await Survey.findOne({
         where: {
@@ -54,7 +67,12 @@ const isSurveyAlreadyTaken = async (req, res) => {
     })
 }
 
+
 // saves the survey information and answers from the user/nurses
+/**
+ * @param  {} req.body Should contain the survey data being submitted
+
+ */
 const postWeeklySurvey = async (req, res) => {
     const surveyData = req.body;
     try {
@@ -123,6 +141,12 @@ const getWeeklySurvey = async(req, res) => {
 
 }
 
+
+/**
+ * Wil return all the completed survey questions and answers for a given user ID
+ * @param  {} req.query.nurses_id 
+
+ */
 const getAllSurveys = async(req, res) => {
     try {
         const query = `SELECT q.*, sa.answer, q.id FROM mydb.survey s INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id
@@ -139,12 +163,14 @@ const getAllSurveys = async(req, res) => {
     }
 
 }
+/**
+ * Returns all data(survey questions/answers and Fitbit data) from the last survey submitted by a user ID
+ * @param  {} req.query.nurses_id 
 
+ */
 const getLastSurvey = async(req, res) => {
     try {
-        
-        //let [results, metadata] = await db.sequelize.query(query);
-
+        //Pull fitbit data
         let results = await Fitbit.findAll({
             limit: 1,
             where: {
@@ -152,19 +178,26 @@ const getLastSurvey = async(req, res) => {
             },
             order: [ [ 'id', 'DESC' ] ]
         })
-
+        //Get survey questions/answers
         const surveyQuery = `SELECT q.*, sa.answer, q.id, s.surveyDate, s.id as surveyID FROM mydb.survey s INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id
             INNER JOIN question q ON q.id = sq.Question_Id
             INNER JOIN surveyanswer sa ON sq.id=sa.survey_question_id 
             WHERE s.nurses_ID = ${req.query.nurses_id} AND  s.id = ${results[0].survey_ID}`;
 
-        const surveyQuestions = await db.sequelize.query(surveyQuery, {
+        let surveyQuestions = await db.sequelize.query(surveyQuery, {
             type: db.sequelize.QueryTypes.SELECT,
         })
-
+        //Gather metadata of the last survey
         const query = `SELECT * from survey  WHERE nurses_ID = ${req.query.nurses_id} AND id = ${results[0].survey_ID} LIMIT 1;`;
         let surveyData = await db.sequelize.query(query, {
             type: db.sequelize.QueryTypes.SELECT,
+        })
+        console.log(surveyQuestions)
+        surveyQuestions = surveyQuestions.map(question => {
+            if(question.answer.charAt(0) == "U") {
+                question.answer = decrypt(question.answer);
+            }
+            return question;
         })
 
         // results = results.map(el => {
@@ -181,7 +214,6 @@ const getLastSurvey = async(req, res) => {
         //     //el.sleep = JSON.parse(decrypt(el.sleep.replaceAll('"','')));
         //     return el;
         // })
-
         const response = {
             results,
             surveyData,
@@ -194,9 +226,14 @@ const getLastSurvey = async(req, res) => {
         res.status(500).send(err);
     }
 }
+/**
+ * Main method for the frontend's Dashboard.  Will gather all surveys from a user over a given period, and will return a list of dates and true/false values on if a survey was completed for that date.
+ * @param  {} req.query.nurses_id
 
+ */
 const getDashboardInfo = async(req, res) => {
     try {
+        //Checks for daily surveys completed
         let surveyDateCheck = new Date();
         const studyStart = new Date(2022, 4, 15);
         const dailySurveyPeriod = [];
@@ -221,6 +258,7 @@ const getDashboardInfo = async(req, res) => {
                 surveyComplete: dailySurveyDates.includes(element)
             }
         })
+        //Check for weekly surveys completed
         let weeklyDates = [];
         surveyDateCheck = studyStart;
         let now = new Date();
@@ -258,7 +296,11 @@ const getDashboardInfo = async(req, res) => {
     }
 
 }
+/**
+ * Gather data on user's shift for that survey date based on the survey ID
+ * @param  {} req.query.survey_id
 
+ */
 const getShiftData = async (req, res) => {
     if (!req.query.survey_id) {
         res.status(500).send('Missing survey id');

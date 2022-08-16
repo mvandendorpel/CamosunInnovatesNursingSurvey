@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import passport from 'passport';
 import { getWeeklyQuestions, postWeeklySurvey, getWeeklySurvey, getAllSurveys, getLastSurvey, getDashboardInfo, getShiftData, isSurveyAlreadyTaken } from '../controllers/survey-api-controller.mjs';
-import {registerNewUser, logInUser, getUserData, getUserStats} from '../controllers/user-api-controller.mjs';
+import {registerNewUser, logInUser, getUserData, getUserStats, getUserList} from '../controllers/user-api-controller.mjs';
 import { getStepData } from '../controllers/fb-api-controller.mjs';
 import { sleepReport, dailyReport, weeklyReport } from '../controllers/research-api-controller.mjs';
 //import {integrateFBData} from '../controllers/fb-api-controller.mjs'
@@ -60,6 +60,9 @@ router.route('/weeklysurvey/:surveyType', cors(corsOptionsDelegate), function(re
     next();
   });
 
+
+router.route('/userlist')
+.get(getUserList);
 
 router.route('/sleepResearch')
 .get(sleepReport);

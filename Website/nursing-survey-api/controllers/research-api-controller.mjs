@@ -6,6 +6,15 @@ import { Sequelize } from 'sequelize';
 import { decrypt, encrypt } from '../util.js';
 import { UserProfile } from '../models/userProfile.mjs';
 
+//THIS CONTROLLER WAS BUILT FOR THE ENDPOINTS NEEDED BY RESEARCHERS.  THE ENDPOINTS HERE WILL GENERATE .XLSX FILES FOR THE RESEARCHERS TO ANALYZE.
+// All Endpoints will be expecting:
+//  - periodStart and periodEnd - Dates in YYYY-MM-DD format
+//  - nurses_id
+
+/**
+ * This will "flatten" JSON data into a single array.  Has limited use, but kept here in case it's wanted later.
+ * @param  {} obj JSON data that is multi-dimensional
+ */
 export const flattenObject = (obj) => {
     const flattened = {}
   
@@ -20,8 +29,13 @@ export const flattenObject = (obj) => {
     })
   
     return flattened
-  }
+}
+/**
+ * Will create an array of dates between two periods.
+ * @param  {} periodStart
+ * @param  {} periodEnd
 
+ */
 const getSurveyPeriod = async (periodStart, periodEnd) => {
     let surveyDateCheck = new Date(periodEnd);
     const periodCheckStart = new Date(periodStart);
@@ -32,7 +46,11 @@ const getSurveyPeriod = async (periodStart, periodEnd) => {
     }
     return dailySurveyPeriod;
 }
+/**
+ * Returns user information.
+ * @param  {} nurses_ID
 
+ */
 const getUserInfo = async (nurses_ID) => {
     var  query = `SELECT user.ID, user.username, user_info.firstName, user_info.lastName, user_info.dateOfBirth, user_info.city, user_info.gender FROM user INNER JOIN user_info ON user.id = user_info.userID where user.id = ${nurses_ID};`
     const results = await db.sequelize.query(query, {
@@ -40,7 +58,12 @@ const getUserInfo = async (nurses_ID) => {
     });
     return results;
 }
+/**
+ * returns Fitbit data found for a nurse over a period of dates
+ * @param  {} nurses_ID
+ * @param  {} dateRange - Array of dates - typically obtained from getSurveyPeriod
 
+ */
 const getFitbitData = async (nurses_ID, dateRange) => {
     const fbResults = await Fitbit.findAll({
         where: {
@@ -53,13 +76,10 @@ const getFitbitData = async (nurses_ID, dateRange) => {
       return fbResults;
 }
 
-
-function generateColumns(accumulator, element) {
-    const keys = Object.keys(element);
-    keys.forEach(key => !(accumulator.includes(key)) && accumulator.push(key));
-    return accumulator;
-}
-
+/**
+ * converts the 15 minute increments into 1 hour increments
+ * @param  {} stepData - Fitbit step data in 15 minute intervals(INTERDAY)
+ */
 const getStepsByHours = 
  (stepData) => {
     let stepCountByHour = []
@@ -78,7 +98,11 @@ const getStepsByHours =
     }
     return stepCountByHour;
 }
+/**
+ * counts total number of steps over a period
+ * @param  {} range - JSON stepdata from Fitbit table
 
+ */
 const getTotal = (range) => {
     let total = 0;
 
@@ -93,7 +117,11 @@ const getAverage = (range) => {
 
     return Math.round(((getTotal(range) / range.length) + Number.EPSILON) * 100) / 100;
 }
+/**
+ * @param  {} stepData
+ * @param  {} threshold
 
+ */
 const getStepsAboveThreshold = 
  (stepData, threshold) => {
     //console.log(stepData)
@@ -111,6 +139,10 @@ const getStepsAboveThreshold =
     return newStepData;
 }
 
+/**
+ * Generates the Sleep Report Excel Sheet
+ * @param  {} req.query Should contain periodStart and periodEnd(YYYY-MM-dd format) and nurses_id
+ */
 const sleepReport = async (req, res) => {
 /*
 This graph uses
@@ -166,6 +198,7 @@ This report would also contain:
         let shiftStart, shiftEnd
         let heartRateAtShiftEnd, heartRateAtShiftStart
         for (var i in shiftResults) {
+            //Get data on user's shift
             if (shiftResults[i].survey_Id == element.survey_ID) {
                 startTime = new Date(decrypt(shiftResults[i].startTime));
                 endTime = new Date(decrypt(shiftResults[i].endTime));
@@ -174,6 +207,7 @@ This report would also contain:
 
 
                 for (var k in element.hr_activity_all['activities-heart-intraday'].dataset) {
+                    //Get heart Rate data
                     var intervalDate = new Date("1970-01-01 " + element.hr_activity_all['activities-heart-intraday'].dataset[k].time);
                     let timeCheck = intervalDate.getHours() * 60 + intervalDate.getMinutes();
                     let startTimeMinutes = startTime.getMinutes();
@@ -209,7 +243,7 @@ This report would also contain:
             "hrEnd": heartRateAtShiftEnd
         }
     });
-
+    //Formatting for spreadsheet.  See xlsx-to-json documentation and JS Sheets documentation
     let data = [
         {
         sheet: `Sleep Data for ${req.query.nurses_id}`,
@@ -231,7 +265,7 @@ This report would also contain:
         
     }];
 
-
+//Settings for spreadsheet file
     let settings = {
         fileName: "SleepDataTest", // Name of the resulting spreadsheet
         extraLength: 3, // A bigger number means that columns will be wider
@@ -239,50 +273,27 @@ This report would also contain:
     }    
     
     res.status(200).send(fbResults);
-    //xlsx(data, settings); 
+    xlsx(data, settings); 
 }
-/*
-let data = [
-  {
-    sheet: "Adults",
-    columns: [
-      { label: "User", value: "user" }, // Top level data
-      { label: "Age", value: (row) => row.age + " years" }, // Custom format
-      { label: "Phone", value: (row) => (row.more ? row.more.phone || "" : "") }, // Run functions
-    ],
-    content: [
-      { user: "Andrea", age: 20, more: { phone: "11111111" } },
-      { user: "Luis", age: 21, more: { phone: "12345678" } },
-    ],
-  },
-  {
-    sheet: "Children",
-    columns: [
-      { label: "User", value: "user" }, // Top level data
-      { label: "Age", value: "age", format: '# "years"' }, // Column format
-      { label: "Phone", value: "user.more.phone", format: "(###) ###-####" }, // Deep props and column format
-    ],
-    content: [
-      { user: "Manuel", age: 16, more: { phone: 9999999900 } },
-      { user: "Ana", age: 17, more: { phone: 8765432135 } },
-    ],
-  },
-]
-
-let settings = {
-  fileName: "MySpreadsheet", // Name of the resulting spreadsheet
-  extraLength: 3, // A bigger number means that columns will be wider
-  writeOptions: {}, // Style options from https://github.com/SheetJS/sheetjs#writing-options
-}
-
-xlsx(data, settings) // Will download the excel file
-*/
+/**
+ * Will generate a report of daily activity over a period.  This data is currently the largest to calculate and will generate several sheets per day:
+ *  - User step data in 15 minute intervals
+ *  - User heart rate in 1 minute intervals
+ *  And will generate this data for each period:
+ *  - The entire day
+ *  - the user's shift
+ *  - the Pre shift period
+ *  - The post shift period
+ * 
+ * Will also return an overview sheet and a sheet containing all questions and answers to the daily surveys
+ * @param  {} req
+ */
 const dailyReport = async (req, res) => {
 
     let surveyIDs = [];
     let dailySurveyPeriod = await getSurveyPeriod(req.query.periodStart, req.query.periodEnd);
 
-
+    //Get survey questions/answers
     const query = `SELECT q.*, sa.answer, q.id, s.surveyDate, s.id as surveyID FROM mydb.survey s INNER JOIN mydb.survey_question sq ON s.Id=sq.Survey_Id
     INNER JOIN question q ON q.id = sq.Question_Id
     INNER JOIN surveyanswer sa ON sq.id=sa.survey_question_id 
@@ -291,7 +302,7 @@ const dailyReport = async (req, res) => {
         replacements: {dailySurveyPeriod},
         type: db.sequelize.QueryTypes.SELECT
     })
-
+    //Get user info
     const userData = await getUserInfo(req.query.nurses_id);
     //console.log(userData);
 
@@ -299,15 +310,15 @@ const dailyReport = async (req, res) => {
 
         surveyIDs.push(surveyResults[i].surveyID);
     }
-
+    //Gather user's shift data
     const shiftQuery = `SELECT * from shiftdata WHERE survey_Id in (:surveyIDs)`;
     const shiftResults = await db.sequelize.query(shiftQuery, {
         replacements: {surveyIDs},
         type: db.sequelize.QueryTypes.SELECT
     })
-
+    //Get firbit data
     const fbResults = await getFitbitData(req.query.nurses_id, dailySurveyPeriod);
-
+    //Clean survey data to just questions and answers
     const surveyData = surveyResults.map(element => {
         element.answer = decrypt(element.answer)
         let questionText = element.questionText;
@@ -320,7 +331,7 @@ const dailyReport = async (req, res) => {
         }
         return data;
     })
-
+    //Remove heart rate data from fitibit results
     const heartRateData = await fbResults.map(element => {
         const date = { "date": element.date}
 
@@ -336,13 +347,10 @@ const dailyReport = async (req, res) => {
         }
         return returnData
     })
-
+    //Remove step data(and compute it)
     const stepData = await fbResults.map( (element) => {
         const date = { "date": element.date };
-        //console.log(date);
-        //console.log(`ELEMENT: ${JSON.stringify(element.step_activity_all['activities-steps-intraday'])}`)
         let fullDaySteps =  getStepsByHours(element.step_activity_all?.['activities-steps-intraday']?.dataset);
-        //console.log(`FULLDAYSTEPS: ${JSON.stringify(fullDaySteps)}`);
         fullDaySteps =  getStepsAboveThreshold(fullDaySteps, 10);
         console.log(`FULLDAYSTEPSFILTERED: ${JSON.stringify(fullDaySteps)}`);
         let shiftSteps =  getStepsByHours(element.step_activity_shift);
@@ -417,51 +425,9 @@ const dailyReport = async (req, res) => {
         return data;
     });
 
-    // const transpose = (a) =>
-    // Object.keys(a[0]).map((c) => {
-    //   let ret = a.map((r) => r[c]);
-    //   ret.unshift(c);
-    //   return ret;
-    // });
-
-    // let filtered = transpose(stepData)
-
-    // const filtered = await stepData.map(obj => {
-    //     const {
-            
-    //         fullDaySteps,
-    //         shiftSteps,
-    //         preShiftSteps,
-    //         postShiftSteps,
-    //         ...rest
-    //     } = obj;
-
-    //     fullDaySteps.map(el => {
-    //         rest[el['time']] = el.stepCount;
-
-    //     })
-    //     shiftSteps.map(el => {
-    //         rest[el['time']] = el.stepCount;
-
-    //     })
-    //     preShiftSteps.map(el => {
-    //         rest[el['time']] = el.stepCount;
-
-    //     })
-    //     postShiftSteps.map(el => {
-    //         rest[el['time']] = el.stepCount;
-
-    //     })
-
-    //     return {
-    //         ...rest,
-            
-    //     }
-
-    // })
 
     
-
+    //json-to-xlsx is not used in this endpoint currently, the data is exported en mass through the XLSX module
 
     // let data = [
     //     {
@@ -498,6 +464,7 @@ const dailyReport = async (req, res) => {
     XLSX.utils.book_append_sheet(workBook, overviewSheet, "Overview Data");
     XLSX.utils.book_append_sheet(workBook, surveySheet, "Survey Questions")
 
+    //Flattens the heart rate data
     heartRateData.map(obj => {
         const {
             shiftHR,
@@ -522,6 +489,7 @@ const dailyReport = async (req, res) => {
         XLSX.utils.book_append_sheet(workBook, XLSX.utils.json_to_sheet(postShiftHR), `Post-Shift HR on ${obj.date}`);
     })
 
+    //Flattens the step data
     stepData.map(obj => {
         const {
             
@@ -575,7 +543,12 @@ const dailyReport = async (req, res) => {
     res.status(200).send(heartRateData);
     
 }
-
+/**
+ * Pulls data for weekly report.  This data is heavily computed(mostly totals and averages) and currently makes a spreadsheet containing two sheets
+ *  1. Averages and totals for each weekly period within the date range
+ *  2. Averages and totals for each day within the period
+ * @param  {} req
+ */
 const weeklyReport = async (req, res) => {
 //     Date
 // -	Weekly date format – perhaps just indicating the date the weekly survey was completed.
@@ -649,18 +622,8 @@ const weeklyReport = async (req, res) => {
         return data;
     })
 
+    //Computes data for weekly information.  Inside this method is the computations for the daily information as well.
     const computedData = await weeklyDates.map((element, index) => {
-        //      Date
-        // -	Weekly date format – perhaps just indicating the date the weekly survey was completed.
-        // Shift summary – days worked,  start/end OR off
-        // -	Date – 20220714 time
-        // o	Willem ?
-        // Average of daily: Fitbit total steps, active minutes, hours with 250+ steps
-        // •	2 hours pre
-        // •	2 hours post
-        // •	Shift
-        // Answers to the questions asked weekly
-
         let stepCount = 0;
         let weeklyHoursOverThreshold = 0;
         let weeklyActiveMinutes = 0
@@ -809,7 +772,7 @@ const weeklyReport = async (req, res) => {
     XLSX.write(workBook, { bookType: "xlsx", type: "buffer" });
     XLSX.write(workBook, { bookType: "xlsx", type: "binary" });
     XLSX.writeFile(workBook,`Weekly Report - ${userData[0].lastName}-${userData[0].firstName.charAt(0)}(${req.query.periodStart}-${req.query.periodEnd}).xlsx`);
-    res.status(200).send(weeklyShiftData);
+    res.status(200).send(workBook);
 }
 
 export {sleepReport, dailyReport, weeklyReport};
